@@ -100,9 +100,9 @@
             </div>
         </div>
     </section>
-
-
-    <section class="accordion2">
+ section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical
+    <!-- Like an object but 1) No quotes for strings (like CSS), 2) Semicolons or commas, 3) no braces -->
+    <section class="accordion2" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical;">
         <div class="section">
             <div class="switch">
                 <h3>Tab 1</h3>
@@ -171,35 +171,37 @@
         orientation: 'vertical'
     });
 
- sa('.accordion2', {
-        section: '.section',
-        switch: '.switch',
-        indicator: '.arrow',
-        content: '.content',
-        close: '.close',
-        orientation: 'vertical'
-    });
+ sa('.accordion2'
+    // , {
+    //     section: '.section',
+    //     switch: '.switch',
+    //     indicator: '.arrow',
+    //     content: '.content',
+    //     close: '.close',
+    //     orientation: 'vertical'
+    // }
+    );
 
-    setTimeout(
-    function(){
-        accordionInstance.destroy();
-        console.log('destroyed')
-    }, 
-    1000);
+    // setTimeout(
+    // function(){
+    //     accordionInstance.destroy();
+    //     console.log('destroyed')
+    // }, 
+    // 1000);
     
-    setTimeout(
-    function(){
-        sa(accordion, {
-        section: '.section',
-        switch: '.switch',
-        indicator: '.arrow',
-        content: '.content',
-        close: '.close',
-        orientation: 'vertical'
-    });
-        console.log('create')
-    }, 
-    4000);
+    // setTimeout(
+    // function(){
+    //     sa(accordion, {
+    //     section: '.section',
+    //     switch: '.switch',
+    //     indicator: '.arrow',
+    //     content: '.content',
+    //     close: '.close',
+    //     orientation: 'vertical'
+    // });
+    //     console.log('create')
+    // }, 
+    // 4000);
 
 
     </script>
