@@ -102,51 +102,59 @@
     </section>
 
 
-<!--
-    <section class="accordion">
+    <section class="accordion2">
         <div class="section">
             <div class="switch">
                 <h3>Tab 1</h3>
+                <div class='arrow'>^</div>
             </div>
             <div class="content">
                 <div class="content-body">
                     <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+                    <span class='close'>X</span>
                 </div>
             </div>
         </div>
         <div class="section">
             <div class="switch">
                 <h3>Tab 2</h3>
+                <div class='arrow'>^</div>
             </div>
             <div class="content">
                 <div class="content-body">
                     <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+<p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+                <span class='close'>X</span>
                 </div>
             </div>
         </div>
         <div class="section">
             <div class="switch">
                 <h3>Tab 3</h3>
+                <div class='arrow'>^</div>
             </div>
             <div class="content">
                 <div class="content-body">
-                    <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+                    <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. </p>
+                    <span class='close'>X</span>
                 </div>
             </div>
         </div>
         <div class="section">
             <div class="switch">
                 <h3>Tab 4</h3>
+                <div class='arrow'>^</div>
             </div>
             <div class="content">
                 <div class="content-body">
                     <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
-
+                    <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+                    <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+                   <span class='close'>X</span>
                 </div>
             </div>
         </div>
     </section>
--->
 
 
     <script src="libs/clicktap.js"></script>
@@ -154,7 +162,7 @@
     <script>
     // var accordion = document.querySelector('.accordion');
     var accordion = '.accordion';
-    simpleAccordion(accordion, {
+ var accordionInstance = sa(accordion, {
         section: '.section',
         switch: '.switch',
         indicator: '.arrow',
@@ -162,6 +170,36 @@
         close: '.close',
         orientation: 'vertical'
     });
+
+ sa('.accordion2', {
+        section: '.section',
+        switch: '.switch',
+        indicator: '.arrow',
+        content: '.content',
+        close: '.close',
+        orientation: 'vertical'
+    });
+
+    setTimeout(
+    function(){
+        accordionInstance.destroy();
+        console.log('destroyed')
+    }, 
+    1000);
+    
+    setTimeout(
+    function(){
+        sa(accordion, {
+        section: '.section',
+        switch: '.switch',
+        indicator: '.arrow',
+        content: '.content',
+        close: '.close',
+        orientation: 'vertical'
+    });
+        console.log('create')
+    }, 
+    4000);
 
 
     </script>

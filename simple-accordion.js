@@ -56,9 +56,10 @@ window.test = document.getElementsByClassName('accordion')[0];
 
 
 (function(window, document, undefined) {
+window.sa = function(accordion, options){
     var simpleAccordion = {},
-        $A = simpleAccordion;
-
+    $A = simpleAccordion;
+    $A.id = '';
     $A.el = {};
     $A.store = {};
     $A.store.contentComputedHeights = {};
@@ -79,28 +80,37 @@ window.test = document.getElementsByClassName('accordion')[0];
             if ((prefixes[len] + upper) in elem.style)
                 return (prefixes[len] + upper);
         }
-
-        return false;
     }
 
+    function randomReference() {
+        return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+    }
 
     simpleAccordion.init = function(accordion, options) {
-        var $A = simpleAccordion;
+        var $A = simpleAccordion,
+            public = {},
+            uniqueID = '' + Math.random(Date.now());
+            instance = 0;
         if (typeof accordion === 'string') {
             accordion = document.querySelector(accordion);
         } else if (accordion.nodeType !== 1) {
-            console.error('nodeType is incorrect');
+            // console.error('nodeType is incorrect');
         }
         if (options.constructor !== {}.constructor) {
-            console.error('Options should be an object literal');
+            // console.error('Options should be an object literal');
         }
+
         $A.options = options;
         $A.accordion = accordion;
-
+        $A.id = randomReference() + uniqueID.substr(uniqueID.length -5, uniqueID.length -1);
         $A.setDefaults();
         $A.getElements();
         $A.setInitialState();
         $A.bindEvents();
+
+        // console.info($A.id, $A.accordion)
+        public.destroy = $A.destroy;
+        return public;
     }
 
     simpleAccordion.setDefaults = function() {
@@ -152,21 +162,24 @@ window.test = document.getElementsByClassName('accordion')[0];
         }
     }
 
-    simpleAccordion.bindEvents = function() {
-        var self = this;
-        // Add one event type per accordion element
-        this.accordion.addEventListener(this.defaults.event, function(e) {
-            var el = self.el,
+    simpleAccordion.filterEvents = function(e) {console.log($A.accordion)
+            var el = $A.el,
                 target = e.target;
             for (section in el) {
                 if (el[section].switch === target) {
                     $A.toggleSection(el[section], section);
                 }
             }
-        });
+        }
+
+    simpleAccordion.bindEvents = function() {
+        var self = this;
+        // Add one event type per accordion element
+        this.accordion.addEventListener(this.defaults.event, simpleAccordion.filterEvents, false);
     }
 
     simpleAccordion.toggleSection = function(section, sectionName) {
+
         var contentBodyHeight = this.store.contentComputedHeights[sectionName];
         // Get "Content" height
         var contentHeight = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(this.defaults.dimension), 10);
@@ -177,15 +190,22 @@ window.test = document.getElementsByClassName('accordion')[0];
         } else {
             // Section content opened action
             // Get computed dimension if content is dynamic
-            // if(!this.defaults.dynamicContent){
-            //     this.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue(this.defaults.dimension), 10);
-            // }
-            console.log('height is zero', section.content)
+            if (!this.defaults.dynamicContent) {
+                this.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue(this.defaults.dimension), 10);
+            }
             section.content.style.height = contentBodyHeight + 'px';
         }
         console.log(contentHeight)
     }
 
+    simpleAccordion.destroy = function() {
+        console.log(simpleAccordion.accordion, simpleAccordion.defaults.event)
+        simpleAccordion.accordion.removeEventListener(simpleAccordion.defaults.event, simpleAccordion.filterEvents);
+    }
 
-    window.simpleAccordion = simpleAccordion.init;
+                            // var simpleAccordionINST = 
+                                // console.log()
+    // window.simpleAccordion = Object.assign({}, simpleAccordion).init;
+    return simpleAccordion.init(accordion, options);
+}
 }(window, document, undefined))
