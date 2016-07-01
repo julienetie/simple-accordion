@@ -84,20 +84,23 @@ window.test = document.getElementsByClassName('accordion')[0];
             }
         }
 
-        function getOptionsViaDataset(accordion){
-                data = accordion.getAttribute('data-simple-accordion'),
+        function getOptionsViaDataset(accordion, options) {
+            var data = accordion.getAttribute('data-simple-accordion'),
                 dataArray, optionsFromDataset = {};
+
 
             if (!options && accordion.getAttribute('data-simple-accordion')) {
                 dataArray = data.replace(';', ',', -1).split(',');
-                
+
                 dataArray.map(function(pair) {
                     return pair.split(':').map(function(part) {
                         return part.replace(';', '').trim();
                     });
-                }).forEach(function(pairAsArray){
+                }).forEach(function(pairAsArray) {
                     optionsFromDataset[pairAsArray[0]] = pairAsArray[1];
                 });
+            } else {
+                console.error('No object or data-simple-accordion options found');
             }
             return optionsFromDataset;
         }
@@ -107,14 +110,20 @@ window.test = document.getElementsByClassName('accordion')[0];
         }
 
         simpleAccordion.init = function(accordion, options) {
-            // var $A = simpleAccordion,
-            //     public = {},
-            //     uniqueID = '' + Math.random(Date.now());
-            // instance = 0;
+            var $A = simpleAccordion,
+                public = {},
+                uniqueID = '' + Math.random(Date.now());
+            instance = 0;
 
-            // var isSelectorAString = typeof accordion === 'string',
-            //     isSelectorAnElement = accordion.nodeType === 1,
-            //     isOptionsAnObjectLiteral = options.constructor === {}.constructor;
+            var isSelectorAString = typeof accordion === 'string',
+                isSelectorAnElement = accordion.nodeType === 1,
+                isOptionsAnObjectLiteral;
+                if(options){
+                    isOptionsAnObjectLiteral = options.constructor === {}.constructor;
+                }else{
+                    isOptionsAnObjectLiteral = null;
+                }
+                
 
 
 
@@ -127,21 +136,32 @@ window.test = document.getElementsByClassName('accordion')[0];
             //     // console.error('Options should be an object literal');
             // }
             // 
-                var accordion = document.querySelector(accordion);
+            // var accordion = document.querySelector(accordion);
 
-                getOptionsViaDataset(accordion);
+            // getOptionsViaDataset(accordion);
 
-            // $A.options = options;
-            // $A.accordion = accordion;
-            // $A.id = randomReference() + uniqueID.substr(uniqueID.length - 5, uniqueID.length - 1);
-            // $A.setDefaults();
-            // $A.getElements();
-            // $A.setInitialState();
-            // $A.bindEvents(simpleAccordion.filterEvents, simpleAccordion.toggleSection, this);
+            accordion = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
 
-            // // console.info($A.id, $A.accordion)
-            // public.destroy = $A.destroy;
-            // return public;
+            if (options) {
+                if (!isOptionsAnObjectLiteral) {
+                    console.error('Options should be an object literal');
+                }
+            } else {
+                options = getOptionsViaDataset(accordion,options);
+            }
+
+
+            $A.options = options;
+            $A.accordion = accordion;
+            $A.id = randomReference() + uniqueID.substr(uniqueID.length - 5, uniqueID.length - 1);
+            $A.setDefaults();
+            $A.getElements();
+            $A.setInitialState();
+            $A.bindEvents(simpleAccordion.filterEvents, simpleAccordion.toggleSection, this);
+
+            // console.info($A.id, $A.accordion)
+            public.destroy = $A.destroy;
+            return public;
         }
 
         simpleAccordion.setDefaults = function() {
