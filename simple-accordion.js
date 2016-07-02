@@ -1,8 +1,8 @@
-(function (window, $) {
-/////////////////////////
-/////////////////////////
+(function(window, $) {
+    /////////////////////////
+    /////////////////////////
 
-var simpleAccordion = function(accordion, options) {
+    var simpleAccordion = function(accordion, options) {
         var simpleAccordion = {},
             $A = simpleAccordion;
         $A.id = '';
@@ -105,6 +105,7 @@ var simpleAccordion = function(accordion, options) {
             this.defaults.contentOverflow = this.options.contentOverflow || 'hidden';
             this.defaults.event = this.options.event || 'click';
             this.defaults.exposure = this.options.exposure || 0;
+            this.defaults.siblingBehavior = this.options.siblingBehavior || 'immediate';
         };
 
 
@@ -130,7 +131,8 @@ var simpleAccordion = function(accordion, options) {
 
 
         simpleAccordion.setInitialState = function() {
-            var el = this.el, section;
+            var el = this.el,
+                section;
             for (section in el) {
                 // Get contentBody element
                 var contentBody = el[section].contentBody;
@@ -152,9 +154,9 @@ var simpleAccordion = function(accordion, options) {
         simpleAccordion.filterEvents = function(e, toggleSection, $A) {
             var el = $A.el,
                 target = e.target,
-                currentSection, 
+                currentSection,
                 section;
-      
+
             for (section in el) {
                 currentSection = el[section];
                 if (currentSection.switch === target) {
@@ -173,17 +175,40 @@ var simpleAccordion = function(accordion, options) {
 
         simpleAccordion.toggleSection = function(section, sectionName, $A) {
             var contentBodyDimension = $A.store.contentComputedHeights[sectionName],
-                contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue($A.defaults.dimension), 10);
+                contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue($A.defaults.dimension), 10),
+                siblingBehavior = $A.defaults.siblingBehavior;
 
-            if (contentClosed) {
-                section.content.style.height = 0;
-            } else {
-                // Get computed dimension if content is dynamic
-                if (!$A.defaults.dynamicContent) {
-                    $A.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue($A.defaults.dimension), 10);
-                }
-                section.content.style.height = contentBodyDimension + 'px';
+
+            switch (siblingBehavior) {
+                case 'immediate':
+                    console.log('DO IMMEDIATE');
+                    break;
+
+                case /pre-confine/.test(siblingBehavior):
+                    console.log('DO PRE CLOSE STUFF');
+                    break;
+
+                case /post-confine/.test(siblingBehavior):
+                     console.log('DO PST CLOSE STUFF');
+                    break;
+
+                case 'remain':
+                    console.log('SIBLINGS REMAIN OPEN');
+                    break;
             }
+
+
+            // Defualt open triggered section content 
+            // if (contentClosed) {
+            //     section.content.style.height = 0;
+            // } else {
+            //     // Get computed dimension if content is dynamic
+            //     if (!$A.defaults.dynamicContent) {
+            //         $A.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue($A.defaults.dimension), 10);
+            //     }
+            //     section.content.style.height = contentBodyDimension + 'px';
+            // }
+
         };
 
 
@@ -194,38 +219,38 @@ var simpleAccordion = function(accordion, options) {
         return simpleAccordion.init(accordion, options);
     };
 
-//////////////////////////////////////
-//////////////////////////////////////
-/**
- * jQuery wrapper 
- */
-$.fn.simpleAccordion = function(options){
-    this.each(function(){
-        simpleAccordion(this, options);
-    });
-    
-    return this;
-}
+    //////////////////////////////////////
+    //////////////////////////////////////
+    /**
+     * jQuery wrapper 
+     */
+    $.fn.simpleAccordion = function(options) {
+        this.each(function() {
+            simpleAccordion(this, options);
+        });
 
-//////////////////////////////////////
-//////////////////////////////////////
+        return this;
+    }
 
-// Node.js/ CommonJS
-if (typeof module === 'object' && typeof module.exports === 'object') {
-module.exports = exports = simpleAccordion;
-}
+    //////////////////////////////////////
+    //////////////////////////////////////
 
-// AMD
-else if (typeof define === 'function' && define.amd) {
-define(function() {
-  return simpleAccordion;
-});
-}
+    // Node.js/ CommonJS
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        module.exports = exports = simpleAccordion;
+    }
 
-// Default to window as global
-else if (typeof window === 'object') {
-window.simpleAccordion = simpleAccordion;
-}
-/* global -module, -exports, -define */
+    // AMD
+    else if (typeof define === 'function' && define.amd) {
+        define(function() {
+            return simpleAccordion;
+        });
+    }
+
+    // Default to window as global
+    else if (typeof window === 'object') {
+        window.simpleAccordion = simpleAccordion;
+    }
+    /* global -module, -exports, -define */
 
 }(typeof window === "undefined" ? {} : window, jQuery));
