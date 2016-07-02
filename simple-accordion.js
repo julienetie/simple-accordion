@@ -214,12 +214,12 @@
                             sectionName,
                             contentClosed,
                             dimension,
-                            setTimeout,
+                            setImmediate,
                             delay
                         );
                     }
 
-                    siblingBehaviors.postConfine(selectedToggled);
+                    siblingBehaviors.postConfine(selectedToggled, dimension);
                     break;
 
                 case 'remain':
@@ -243,9 +243,9 @@
         };
 
         simpleAccordion.toggleSelected = function(section, sectionName, contentClosed, dimension, timimgFn, delay) {
-            var self = this;
+            var self = this, timeoutID;
             return new Promise(function(resolve) {
-                timimgFn(function() {
+                timeoutID = timimgFn(function() {
                     var contentBodyDimension = self.store.contentComputedHeights[sectionName]
                     if (contentClosed) {
                         section.content.style[dimension] = 0;
@@ -257,7 +257,7 @@
                         section.content.style[dimension] = contentBodyDimension + 'px';
                     }
                     transitionEnd(section.content).bindEvent(function() {
-                        resolve('FINISHED');
+                        resolve(timeoutID);
                         transitionEnd(this).unbindEvent();
                     });
                 }, delay);
@@ -269,12 +269,12 @@
             this.$A = $A;
             this.el = $A.el;
             this.currentSectionName = currentSectionName;
-            this.siblingSectionNames = [];
+            this.siblingSections = [];
 
             // Get sibling sections
             for (section in this.el) {
                 if (section !== currentSectionName) {
-                    this.siblingSectionNames.push(section);
+                    this.siblingSections.push(this.el[section]);
                 }
             }
 
@@ -288,10 +288,13 @@
             // console.log('preConfine', this.siblingSectionNames);
         };
 
-        simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled) {
-            // console.log('postConfine', this.siblingSectionNames);
+        simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled, dimension) {
+            var self = this;
             selectedToggled.then(function(results) {
-                console.log(results + ' ' + ' in postConfine');
+                self.siblingSections.forEach(function(siblingSection){
+                    clearTimeout(results);
+                    siblingSection.content.style[dimension] = 0;
+                })
             });
         };
 
