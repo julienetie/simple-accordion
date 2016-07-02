@@ -188,7 +188,7 @@
             switch (siblingBehavior) {
                 case 'immediate':
                     // console.log('DO IMMEDIATE');
-                    // $A.toggleSelected();
+
                     siblingBehaviors.immediate();
                     break;
 
@@ -199,7 +199,8 @@
 
                 case postConfine:
                     // console.log('DO POST CLOSE STUFF');
-                    siblingBehaviors.postConfine();
+                    var selectedToggled = $A.toggleSelected();
+                    siblingBehaviors.postConfine(selectedToggled);
                     break;
 
                 case 'remain':
@@ -223,7 +224,14 @@
         };
 
         simpleAccordion.toggleSelected = function() {
-            console.log('toggleSelected');
+            console.log('toggleSelected Fn');
+            return new Promise(function(resolve, reject){
+                setImmediate(function() {
+                    var yo = 'toggleSelected promise setImmediate';
+                        console.log(yo)
+                    resolve(yo); 
+                });
+            });
         }
 
         simpleAccordion.SiblingBehavior = function($A, currentSectionName) {
@@ -243,19 +251,22 @@
         }
 
         simpleAccordion.SiblingBehavior.prototype.immediate = function() {
-            console.log('immediate', this.siblingSectionNames, this.$A);
+            // console.log('immediate', this.siblingSectionNames, this.$A);
         };
 
         simpleAccordion.SiblingBehavior.prototype.preConfine = function() {
-            console.log('preConfine', this.siblingSectionNames);
+            // console.log('preConfine', this.siblingSectionNames);
         };
 
-        simpleAccordion.SiblingBehavior.prototype.postConfine = function() {
-            console.log('postConfine', this.siblingSectionNames);
+        simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled) {
+            // console.log('postConfine', this.siblingSectionNames);
+            selectedToggled.then(function(results){
+                console.log(results + ' ' + ' in postConfine' );
+            });
         };
 
         simpleAccordion.SiblingBehavior.prototype.remain = function() {
-            console.log('remain', this.siblingSectionNames);
+            // console.log('remain', this.siblingSectionNames);
         };
 
 
