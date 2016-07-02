@@ -38,8 +38,7 @@
 
 
             if (!options && accordion.getAttribute('data-simple-accordion')) {
-                dataArray = data.replace(';', ',', -1).split(',');
-
+                dataArray = data.replace(/;/ig, ',').split(',');
                 dataArray.map(function(pair) {
                     return pair.split(':').map(function(part) {
                         return part.replace(';', '').trim();
@@ -177,6 +176,12 @@
             var contentBodyDimension = $A.store.contentComputedHeights[sectionName],
                 contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue($A.defaults.dimension), 10),
                 siblingBehavior = $A.defaults.siblingBehavior;
+                console.log(siblingBehavior)
+
+// console.log(siblingBehavior.indexOf('preconfine') > -1)
+
+                var preConfine = siblingBehavior.indexOf('pre-confine') >= 0 ? siblingBehavior : null;
+                var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
 
 
             switch (siblingBehavior) {
@@ -184,12 +189,12 @@
                     console.log('DO IMMEDIATE');
                     break;
 
-                case /pre-confine/.test(siblingBehavior):
+                case preConfine:
                     console.log('DO PRE CLOSE STUFF');
                     break;
 
-                case /post-confine/.test(siblingBehavior):
-                     console.log('DO PST CLOSE STUFF');
+                case postConfine:
+                     console.log('DO POST CLOSE STUFF');
                     break;
 
                 case 'remain':

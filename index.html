@@ -189,7 +189,7 @@
 
 
     <!-- Like an object but 1) No quotes for strings (like CSS), 2) Semicolons or commas, 3) no braces -->
-    <section class="accordion2 green" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical;">
+    <section class="accordion2 green" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical; siblingBehavior: post-confine;">
         <div class="section">
             <div class="switch">
                 <h3>Tab 1</h3>
@@ -271,7 +271,8 @@
         indicator: '.arrow',
         content: '.content',
         close: '.close',
-        orientation: 'vertical'
+        orientation: 'vertical',
+        siblingBehavior: 'immediate'
     });
 
 // jQuery instnace
@@ -281,7 +282,8 @@ $('.accordion:nth-child(2').simpleAccordion({
         indicator: '.arrow',
         content: '.content',
         close: '.close',
-        orientation: 'vertical'
+        orientation: 'vertical',
+        siblingBehavior: 'pre-confine'
     });
 
 
