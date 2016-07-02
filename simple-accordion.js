@@ -140,7 +140,7 @@
                 // Set content sections to zero dimension
                 el[section].content.style[this.defaults.dimension] = this.defaults.exposure;
                 // Set content transition 
-                el[section].content.style[fix('transition')] = 'all 0.5s ease';
+                el[section].content.style[fix('transition')] = 'all .3s ease';
                 // Get computed dimension immediately if content body is not dynamic
                 if (this.defaults.dynamicContent) {
                     this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(this.defaults.dimension), 10);
@@ -173,10 +173,9 @@
 
 
         simpleAccordion.toggleSection = function(section, sectionName, $A) {
-            var contentBodyDimension = $A.store.contentComputedHeights[sectionName],
-                contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue($A.defaults.dimension), 10),
+            var dimension = $A.defaults.dimension,
+                contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(dimension), 10),
                 siblingBehavior = $A.defaults.siblingBehavior;
-            // console.log(siblingBehavior)
 
             // console.log(siblingBehavior.indexOf('preconfine') > -1)
 
@@ -201,11 +200,23 @@
                 case postConfine:
                     var delay = postConfine.replace(/[^\d.]/g, '');
                     if (delay) {
-                        console.log('delay', delay)
-                        selectedToggled = $A.toggleSelected(setTimeout, delay);
+                        selectedToggled = $A.toggleSelected(
+                            section,
+                            sectionName,
+                            contentClosed,
+                            dimension,
+                            setTimeout,
+                            delay
+                        );
                     } else {
-                        console.log('No DELAY');
-                        selectedToggled = $A.toggleSelected(setImmediate);
+                        selectedToggled = $A.toggleSelected(
+                            section,
+                            sectionName,
+                            contentClosed,
+                            dimension,
+                            setTimeout,
+                            delay
+                        );
                     }
 
                     siblingBehaviors.postConfine(selectedToggled);
@@ -231,24 +242,25 @@
 
         };
 
-        simpleAccordion.toggleSelected = function(timimgFn, delay) {
-            console.log('toggleSelected Fn', this);
+        simpleAccordion.toggleSelected = function(section, sectionName, contentClosed, dimension, timimgFn, delay) {
+            var self = this;
             return new Promise(function(resolve) {
                 timimgFn(function() {
-                    var yo = 'toggleSelected promise setImmediate';
-                        console.log(yo)
-                    // if (contentClosed) {
-                    //     section.content.style.height = 0;
-                    // } else {
-                    //     // Get computed dimension if content is dynamic
-                    //     if (!$A.defaults.dynamicContent) {
-                    //         $A.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue($A.defaults.dimension), 10);
-                    //     }
-                    //     section.content.style.height = contentBodyDimension + 'px';
-                    // }
-
-                    resolve(yo);
-                },delay);
+                    var contentBodyDimension = self.store.contentComputedHeights[sectionName]
+                    if (contentClosed) {
+                        section.content.style[dimension] = 0;
+                    } else {
+                        // Get computed dimension if content is dynamic
+                        if (self.defaults.dynamicContent) {
+                            self.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue(self.defaults.dimension), 10);
+                        }
+                        section.content.style[dimension] = contentBodyDimension + 'px';
+                    }
+                    transitionEnd(section.content).bindEvent(function() {
+                        resolve('FINISHED');
+                        transitionEnd(this).unbindEvent();
+                    });
+                }, delay);
             });
         }
 
