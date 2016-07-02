@@ -144,7 +144,6 @@ var simpleAccordion = function(accordion, options) {
                 if (this.defaults.dynamicContent) {
                     this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(this.defaults.dimension), 10);
                 }
-                // console.log(el[section].contentBody)
                 el[section].contentBody.style.visibility = this.defaults.contentBodyVisibility;
             }
         };
