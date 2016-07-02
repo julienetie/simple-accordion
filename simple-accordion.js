@@ -184,6 +184,7 @@
             var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
 
             var siblingBehaviors = new simpleAccordion.SiblingBehavior($A, sectionName);
+            var selectedToggled;
 
             switch (siblingBehavior) {
                 case 'immediate':
@@ -198,13 +199,15 @@
                     break;
 
                 case postConfine:
-                var delay = postConfine.replace ( /[^\d.]/g, '' );
-                    if(delay){
+                    var delay = postConfine.replace(/[^\d.]/g, '');
+                    if (delay) {
                         console.log('delay', delay)
-                    }else{
+                        selectedToggled = $A.toggleSelected(setTimeout, delay);
+                    } else {
                         console.log('No DELAY');
+                        selectedToggled = $A.toggleSelected(setImmediate);
                     }
-                    var selectedToggled = $A.toggleSelected();
+
                     siblingBehaviors.postConfine(selectedToggled);
                     break;
 
@@ -228,14 +231,24 @@
 
         };
 
-        simpleAccordion.toggleSelected = function() {
-            console.log('toggleSelected Fn');
-            return new Promise(function(resolve, reject){
-                setImmediate(function() {
+        simpleAccordion.toggleSelected = function(timimgFn, delay) {
+            console.log('toggleSelected Fn', this);
+            return new Promise(function(resolve) {
+                timimgFn(function() {
                     var yo = 'toggleSelected promise setImmediate';
                         console.log(yo)
-                    resolve(yo); 
-                });
+                    // if (contentClosed) {
+                    //     section.content.style.height = 0;
+                    // } else {
+                    //     // Get computed dimension if content is dynamic
+                    //     if (!$A.defaults.dynamicContent) {
+                    //         $A.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue($A.defaults.dimension), 10);
+                    //     }
+                    //     section.content.style.height = contentBodyDimension + 'px';
+                    // }
+
+                    resolve(yo);
+                },delay);
             });
         }
 
@@ -265,8 +278,8 @@
 
         simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled) {
             // console.log('postConfine', this.siblingSectionNames);
-            selectedToggled.then(function(results){
-                console.log(results + ' ' + ' in postConfine' );
+            selectedToggled.then(function(results) {
+                console.log(results + ' ' + ' in postConfine');
             });
         };
 
