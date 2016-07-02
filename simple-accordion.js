@@ -176,29 +176,35 @@
             var contentBodyDimension = $A.store.contentComputedHeights[sectionName],
                 contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue($A.defaults.dimension), 10),
                 siblingBehavior = $A.defaults.siblingBehavior;
-                console.log(siblingBehavior)
+            // console.log(siblingBehavior)
 
-// console.log(siblingBehavior.indexOf('preconfine') > -1)
+            // console.log(siblingBehavior.indexOf('preconfine') > -1)
 
-                var preConfine = siblingBehavior.indexOf('pre-confine') >= 0 ? siblingBehavior : null;
-                var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
+            var preConfine = siblingBehavior.indexOf('pre-confine') >= 0 ? siblingBehavior : null;
+            var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
 
+            var siblingBehaviors = new simpleAccordion.SiblingBehavior($A, sectionName);
 
             switch (siblingBehavior) {
                 case 'immediate':
-                    console.log('DO IMMEDIATE');
+                    // console.log('DO IMMEDIATE');
+                    // $A.toggleSelected();
+                    siblingBehaviors.immediate();
                     break;
 
                 case preConfine:
-                    console.log('DO PRE CLOSE STUFF');
+                    // console.log('DO PRE CLOSE STUFF');
+                    siblingBehaviors.preConfine();
                     break;
 
                 case postConfine:
-                     console.log('DO POST CLOSE STUFF');
+                    // console.log('DO POST CLOSE STUFF');
+                    siblingBehaviors.postConfine();
                     break;
 
                 case 'remain':
-                    console.log('SIBLINGS REMAIN OPEN');
+                    // console.log('SIBLINGS REMAIN OPEN');
+                    siblingBehaviors.remain();
                     break;
             }
 
@@ -216,6 +222,44 @@
 
         };
 
+        simpleAccordion.toggleSelected = function() {
+            console.log('toggleSelected');
+        }
+
+        simpleAccordion.SiblingBehavior = function($A, currentSectionName) {
+            var section;
+            this.$A = $A;
+            this.el = $A.el;
+            this.currentSectionName = currentSectionName;
+            this.siblingSectionNames = [];
+
+            // Get sibling sections
+            for (section in this.el) {
+                if (section !== currentSectionName) {
+                    this.siblingSectionNames.push(section);
+                }
+            }
+
+        }
+
+        simpleAccordion.SiblingBehavior.prototype.immediate = function() {
+            console.log('immediate', this.siblingSectionNames, this.$A);
+        };
+
+        simpleAccordion.SiblingBehavior.prototype.preConfine = function() {
+            console.log('preConfine', this.siblingSectionNames);
+        };
+
+        simpleAccordion.SiblingBehavior.prototype.postConfine = function() {
+            console.log('postConfine', this.siblingSectionNames);
+        };
+
+        simpleAccordion.SiblingBehavior.prototype.remain = function() {
+            console.log('remain', this.siblingSectionNames);
+        };
+
+
+        window.sa = simpleAccordion.siblingBehavior;
 
         simpleAccordion.destroy = function() {
             simpleAccordion.accordion.removeEventListener(simpleAccordion.defaults.event, simpleAccordion.filterEvents);
