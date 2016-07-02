@@ -198,7 +198,12 @@
                     break;
 
                 case postConfine:
-                    // console.log('DO POST CLOSE STUFF');
+                var delay = postConfine.replace ( /[^\d.]/g, '' );
+                    if(delay){
+                        console.log('delay', delay)
+                    }else{
+                        console.log('No DELAY');
+                    }
                     var selectedToggled = $A.toggleSelected();
                     siblingBehaviors.postConfine(selectedToggled);
                     break;
