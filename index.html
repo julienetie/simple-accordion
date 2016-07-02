@@ -242,7 +242,17 @@
             </div>
         </div>
     </section>
-
+    <script>
+        // Simple Accordion InitalState Setter
+        [
+            ['.accordion', '.content'],
+            ['.accordion:nth-child(2)', '.content'],
+            ['.accordion2', '.content']
+        ]
+        .forEach(function(a){[].slice.call(document.querySelector(a[0])
+        .querySelectorAll(a[1])).forEach(function(c){c.style.height = 0;
+        c.children[0].style.visibility = 'hidden';});});
+    </script>
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
     <script src="libs/clicktap.js"></script>
     <script src="simple-accordion.js"></script>
