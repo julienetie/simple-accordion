@@ -1,6 +1,7 @@
-(function (window) {
+(function (window, $) {
 /////////////////////////
 /////////////////////////
+
 var simpleAccordion = function(accordion, options) {
         var simpleAccordion = {},
             $A = simpleAccordion;
@@ -190,6 +191,20 @@ var simpleAccordion = function(accordion, options) {
 
         return simpleAccordion.init(accordion, options);
     };
+
+//////////////////////////////////////
+//////////////////////////////////////
+/**
+ * jQuery wrapper 
+ */
+$.fn.simpleAccordion = function(options){
+    this.each(function(){
+        simpleAccordion(this, options);
+    });
+    
+    return this;
+}
+
 //////////////////////////////////////
 //////////////////////////////////////
 
@@ -211,8 +226,27 @@ window.simpleAccordion = simpleAccordion;
 }
 /* global -module, -exports, -define */
 
-}((typeof window === "undefined" ? {} : window)));
+}(typeof window === "undefined" ? {} : window, jQuery));
 
 
 
-
+// (function ( $ ) {
+ 
+//     $.fn.greenify = function( options ) {
+ 
+//         // This is the easiest way to have default options.
+//         var settings = $.extend({
+//             // These are the defaults.
+//             color: "#556b2f",
+//             backgroundColor: "white"
+//         }, options );
+ 
+//         // Greenify the collection based on the settings variable.
+//         return this.css({
+//             color: settings.color,
+//             backgroundColor: settings.backgroundColor
+//         });
+ 
+//     };
+ 
+// }( jQuery ));
