@@ -32,7 +32,7 @@
         position: relative;
         height: 300px;
         width: 100%;
-        background-color: lightblue;
+        background-color: #E4E8BA;
 /*        -webkit-transition: all 0.5s ease;
         -moz-transition: all 0.5s ease;
         -o-transition: all 0.5s ease;
@@ -42,6 +42,16 @@
     .content-body {
 /*        position: absolute;
         bottom: 0;*/
+    }
+
+    .red .switch{
+        background-color: #D4A190;
+    }
+    .green .switch{
+        background-color: #A1D490;
+    }
+    .blue .switch{
+        background-color: #90C3D4;
     }
     </style>
 </head>
@@ -53,7 +63,7 @@
 
 
 
-    <section class="accordion">
+    <section class="accordion red">
         <div class="section">
             <div class="switch">
                 <h3>Tab 1</h3>
@@ -115,7 +125,7 @@
 
 
 
-    <section class="accordion">
+    <section class="accordion blue">
         <div class="section">
             <div class="switch">
                 <h3>Tab 1</h3>
@@ -179,7 +189,7 @@
 
 
     <!-- Like an object but 1) No quotes for strings (like CSS), 2) Semicolons or commas, 3) no braces -->
-    <section class="accordion2" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical;">
+    <section class="accordion2 green" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical;">
         <div class="section">
             <div class="switch">
                 <h3>Tab 1</h3>
