@@ -99,11 +99,12 @@ var simpleAccordion = function(accordion, options) {
 
 
         simpleAccordion.setDefaults = function() {
-            this.defaults.event = this.options.event || 'click';
             this.defaults.dimension = this.options.orientation === 'horizontal' ? 'width' : 'height';
-            this.defaults.contentOverflow = this.options.contentOverflow || 'hidden';
-            this.defaults.exposure = this.options.exposure || 0;
             this.defaults.dynamicContent = !this.options.dynamicContent || true;
+            this.defaults.contentBodyVisibility = this.options.contentBodyVisibility || 'visible';
+            this.defaults.contentOverflow = this.options.contentOverflow || 'hidden';
+            this.defaults.event = this.options.event || 'click';
+            this.defaults.exposure = this.options.exposure || 0;
         };
 
 
@@ -143,6 +144,8 @@ var simpleAccordion = function(accordion, options) {
                 if (this.defaults.dynamicContent) {
                     this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(this.defaults.dimension), 10);
                 }
+                // console.log(el[section].contentBody)
+                el[section].contentBody.style.visibility = this.defaults.contentBodyVisibility;
             }
         };
 
