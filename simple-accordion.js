@@ -48,15 +48,14 @@
 
 // });
 
-window.test = document.getElementsByClassName('accordion')[0];
-/**
- * "Avoidance" of the use of:
- * new, call, bind, apply,  
- */
+(function (window) {
+/////////////////////////
 
 
-(function(window, document, undefined) {
-    window.sa = function(accordion, options) {
+
+
+
+var simpleAccordion = function(accordion, options) {
         var simpleAccordion = {},
             $A = simpleAccordion;
         $A.id = '';
@@ -66,6 +65,7 @@ window.test = document.getElementsByClassName('accordion')[0];
         $A.accordion = '';
         $A.sectionNodes = [];
         $A.defaults = {};
+
 
         // http://addyosmani.com/polyfillthehtml5gaps/slides/#78
         function fix(prop) {
@@ -83,6 +83,7 @@ window.test = document.getElementsByClassName('accordion')[0];
                 }
             }
         }
+
 
         function getOptionsViaDataset(accordion, options) {
             var data = accordion.getAttribute('data-simple-accordion'),
@@ -105,40 +106,25 @@ window.test = document.getElementsByClassName('accordion')[0];
             return optionsFromDataset;
         }
 
+
         function randomReference() {
             return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         }
+
 
         simpleAccordion.init = function(accordion, options) {
             var $A = simpleAccordion,
                 public = {},
                 uniqueID = '' + Math.random(Date.now());
-            instance = 0;
 
             var isSelectorAString = typeof accordion === 'string',
                 isSelectorAnElement = accordion.nodeType === 1,
                 isOptionsAnObjectLiteral;
-                if(options){
-                    isOptionsAnObjectLiteral = options.constructor === {}.constructor;
-                }else{
-                    isOptionsAnObjectLiteral = null;
-                }
-                
-
-
-
-            // if (typeof accordion === 'string') {
-            //     accordion = document.querySelector(accordion);
-            // } else if (accordion.nodeType !== 1) {
-            //     // console.error('nodeType is incorrect');
-            // }
-            // if (options.constructor !== {}.constructor) {
-            //     // console.error('Options should be an object literal');
-            // }
-            // 
-            // var accordion = document.querySelector(accordion);
-
-            // getOptionsViaDataset(accordion);
+            if (options) {
+                isOptionsAnObjectLiteral = options.constructor === {}.constructor;
+            } else {
+                isOptionsAnObjectLiteral = null;
+            }
 
             accordion = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
 
@@ -147,7 +133,7 @@ window.test = document.getElementsByClassName('accordion')[0];
                     console.error('Options should be an object literal');
                 }
             } else {
-                options = getOptionsViaDataset(accordion,options);
+                options = getOptionsViaDataset(accordion, options);
             }
 
 
@@ -162,7 +148,8 @@ window.test = document.getElementsByClassName('accordion')[0];
             // console.info($A.id, $A.accordion)
             public.destroy = $A.destroy;
             return public;
-        }
+        };
+
 
         simpleAccordion.setDefaults = function() {
             this.defaults.event = this.options.event || 'click';
@@ -170,7 +157,8 @@ window.test = document.getElementsByClassName('accordion')[0];
             this.defaults.contentOverflow = this.options.contentOverflow || 'hidden';
             this.defaults.exposure = this.options.exposure || 0;
             this.defaults.dynamicContent = !this.options.dynamicContent || true;
-        }
+        };
+
 
         simpleAccordion.getElements = function() {
             var el = this.el,
@@ -190,10 +178,11 @@ window.test = document.getElementsByClassName('accordion')[0];
                 id.contentBody = el[prefix + i].content.children[0];
                 id.close = el[prefix + i].contentBody.querySelector(options.close);
             });
-        }
+        };
+
 
         simpleAccordion.setInitialState = function() {
-            var el = this.el;
+            var el = this.el, section;
             for (section in el) {
                 // Get contentBody element
                 var contentBody = el[section].contentBody;
@@ -208,25 +197,30 @@ window.test = document.getElementsByClassName('accordion')[0];
                     this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(this.defaults.dimension), 10);
                 }
             }
-        }
+        };
+
 
         simpleAccordion.filterEvents = function(e, toggleSection, $A) {
             var el = $A.el,
                 target = e.target,
-                currentSection;
+                currentSection, 
+                section;
+      
             for (section in el) {
                 currentSection = el[section];
                 if (currentSection.switch === target) {
                     toggleSection(currentSection, section, $A);
                 }
             }
-        }
+        };
+
 
         simpleAccordion.bindEvents = function(filterEvents, toggleSection, $A) {
             this.accordion.addEventListener(this.defaults.event, function(e) {
                 filterEvents(e, toggleSection, $A);
             }, false);
-        }
+        };
+
 
         simpleAccordion.toggleSection = function(section, sectionName, $A) {
             var contentBodyDimension = $A.store.contentComputedHeights[sectionName],
@@ -241,13 +235,44 @@ window.test = document.getElementsByClassName('accordion')[0];
                 }
                 section.content.style.height = contentBodyDimension + 'px';
             }
-        }
+        };
+
 
         simpleAccordion.destroy = function() {
-            console.log(simpleAccordion.accordion, simpleAccordion.defaults.event)
             simpleAccordion.accordion.removeEventListener(simpleAccordion.defaults.event, simpleAccordion.filterEvents);
-        }
+        };
 
         return simpleAccordion.init(accordion, options);
-    }
-}(window, document, undefined))
+    };
+
+
+
+
+
+
+
+//////////////////////////////////////
+
+// Node.js/ CommonJS
+if (typeof module === 'object' && typeof module.exports === 'object') {
+module.exports = exports = simpleAccordion;
+}
+
+// AMD
+else if (typeof define === 'function' && define.amd) {
+define(function() {
+  return simpleAccordion;
+});
+}
+
+// Default to window as global
+else if (typeof window === 'object') {
+window.simpleAccordion = simpleAccordion;
+}
+/* global -module, -exports, -define */
+
+}((typeof window === "undefined" ? {} : window)));
+
+
+
+

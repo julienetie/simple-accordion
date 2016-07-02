@@ -100,7 +100,7 @@
             </div>
         </div>
     </section>
- section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical
+
     <!-- Like an object but 1) No quotes for strings (like CSS), 2) Semicolons or commas, 3) no braces -->
     <section class="accordion2" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical;">
         <div class="section">
@@ -123,7 +123,7 @@
             <div class="content">
                 <div class="content-body">
                     <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
-<p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
+                    <p>Lorem honeyed locusts sit amet, none so wise, sed do eiusmod never resting ut labore et dolore magna aliqua. Manhood death before disgrace warrior, feed it to the goats spare me your false courtesy commodo consequat. Mace aute irure dolor in reprehenderit poison is a woman's weapon lord of light tower dwarf. The last of the dragons royal, godswood garron sister betrothed officia deserunt mollit anim id est snow.</p>
                 <span class='close'>X</span>
                 </div>
             </div>
@@ -156,13 +156,15 @@
         </div>
     </section>
 
-
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
     <script src="libs/clicktap.js"></script>
     <script src="simple-accordion.js"></script>
     <script>
     // var accordion = document.querySelector('.accordion');
     var accordion = '.accordion';
- var accordionInstance = sa(accordion, {
+
+// Simple example
+ var accordionInstance = simpleAccordion(accordion, {
         section: '.section',
         switch: '.switch',
         indicator: '.arrow',
@@ -171,15 +173,9 @@
         orientation: 'vertical'
     });
 
- sa('.accordion2');
-    // , {
-    //     section: '.section',
-    //     switch: '.switch',
-    //     indicator: '.arrow',
-    //     content: '.content',
-    //     close: '.close',
-    //     orientation: 'vertical'
-    // }
+// Data Attribute example
+ simpleAccordion('.accordion2');
+
 
 
     // setTimeout(
