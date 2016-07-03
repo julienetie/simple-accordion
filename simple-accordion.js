@@ -3,8 +3,7 @@
     /////////////////////////
 
     var simpleAccordion = function(accordion, options) {
-        var simpleAccordion = {},
-            $A = simpleAccordion;
+        var $A = {};
         $A.id = '';
         $A.el = {};
         $A.store = {};
@@ -86,9 +85,8 @@
             }
         }
 
-        simpleAccordion.init = function(accordion, options) {
-            var $A = simpleAccordion,
-                public = {},
+        $A.init = function(accordion, options) {
+            var public = {},
                 uniqueID = '' + Math.random(Date.now());
 
             var isSelectorAString = typeof accordion === 'string',
@@ -117,7 +115,7 @@
             $A.setDefaults();
             $A.getElements();
             $A.setInitialState();
-            $A.bindEvents(simpleAccordion.filterEvents, simpleAccordion.toggleSection, this);
+            $A.bindEvents($A.filterEvents, $A.toggleSection, this);
 
             // console.info($A.id, $A.accordion)
             public.destroy = $A.destroy;
@@ -125,7 +123,7 @@
         };
 
 
-        simpleAccordion.setDefaults = function() {
+        $A.setDefaults = function() {
             this.defaults.dimension = this.options.orientation === 'horizontal' ? 'width' : 'height';
             this.defaults.dynamicContent = !this.options.dynamicContent || true;
             this.defaults.contentBodyVisibility = this.options.contentBodyVisibility || 'visible';
@@ -137,7 +135,7 @@
             this.defaults.delayTimingFn = this.options.delayTimingFn || 'animationFrame'; // 'setTimeout'
         };
 
-        simpleAccordion.getElements = function() {
+        $A.getElements = function() {
             var el = this.el,
                 sectionNodes = this.sectionNodes,
                 options = this.options,
@@ -158,7 +156,7 @@
         };
 
 
-        simpleAccordion.setInitialState = function() {
+        $A.setInitialState = function() {
             var el = this.el,
                 section;
             for (section in el) {
@@ -180,7 +178,7 @@
         };
 
 
-        simpleAccordion.filterEvents = function(e, toggleSection, $A) {
+        $A.filterEvents = function(e, toggleSection, $A) {
             var el = $A.el,
                 target = e.target,
                 currentSection,
@@ -195,7 +193,7 @@
         };
 
 
-        simpleAccordion.bindEvents = function(filterEvents, toggleSection, $A) {
+        $A.bindEvents = function(filterEvents, toggleSection, $A) {
             var quit = false;
             this.accordion.addEventListener(this.defaults.event, function(e) {
                 if (quit) {
@@ -210,7 +208,7 @@
         };
 
 
-        simpleAccordion.toggleSection = function(section, sectionName, $A) {
+        $A.toggleSection = function(section, sectionName, $A) {
             var dimension = $A.defaults.dimension,
                 contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(dimension), 10),
                 siblingBehavior = $A.defaults.siblingBehavior,
@@ -246,7 +244,7 @@
                         delay
                     );
 
-                    simpleAccordion.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
+                    $A.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
                     break;
 
                 case 'remain':
@@ -256,7 +254,7 @@
             }
         };
 
-        simpleAccordion.toggleSelected = function(section, sectionName, contentClosed, dimension) {
+        $A.toggleSelected = function(section, sectionName, contentClosed, dimension) {
             var self = this;
 
             return new Promise(function(resolve) {
@@ -279,13 +277,13 @@
             });
         }
 
-        simpleAccordion.SiblingBehavior = {};
+        $A.SiblingBehavior = {};
 
-        // simpleAccordion.SiblingBehavior.prototype.immediate = function() {
+        // $A.SiblingBehavior.prototype.immediate = function() {
         //     // console.log('immediate', this.siblingSectionNames, this.$A);
         // };
 
-        // simpleAccordion.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
+        // $A.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
         //     var self = this;
         //     selectedToggled.then(function(results) {
         //         self.siblingSections.forEach(function(siblingSection) {
@@ -303,7 +301,7 @@
          * @param  {[type]} currentSectionName [description]
          * @return {[type]}                    [description]
          */
-        simpleAccordion.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
+        $A.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
             var self = this,
                 timimgFn = delay ? setTimeout : setImmediate,
                 timingID;
@@ -333,18 +331,15 @@
             });
         };
 
-        // simpleAccordion.SiblingBehavior.prototype.remain = function() {
+        // $A.SiblingBehavior.prototype.remain = function() {
         //     // console.log('remain', this.siblingSectionNames);
         // };
 
-
-        window.sa = simpleAccordion.siblingBehavior;
-
-        simpleAccordion.destroy = function() {
-            simpleAccordion.accordion.removeEventListener(simpleAccordion.defaults.event, simpleAccordion.filterEvents);
+        $A.destroy = function() {
+            $A.accordion.removeEventListener($A.defaults.event, $A.filterEvents);
         };
 
-        return simpleAccordion.init(accordion, options);
+        return $A.init(accordion, options);
     };
 
     //////////////////////////////////////
