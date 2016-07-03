@@ -298,7 +298,9 @@
                     {
                         delay = postConfine.replace(nonNumeric, '');
                         delayType = getDelayType(postConfine, $A);
+
                         console.log(delayType);
+
                         selectedToggled = $A.toggleSelected(
                             section,
                             sectionName,
@@ -307,7 +309,7 @@
                             delay
                         );
 
-                        $A.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
+                        $A.SiblingBehavior.postConfine(selectedToggled, dimension, delayType, delay, sectionName);
                         break;
                     }
                 case 'remain':
@@ -363,7 +365,7 @@
         //     });
         // };
 
-        $A.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
+        $A.SiblingBehavior.postConfine = function(selectedToggled, dimension, delayType, delay, currentSectionName) {
             var self = this;
             var timimgFn = delay ? setTimeout : setImmediate;
             var timingID;
@@ -383,13 +385,27 @@
 
             selectedToggled.then(function(results) {
                 timingID = timimgFn(function() {
-                    if (!$A.toggleEventRegister) {
-                        self.siblingSections.forEach(function(siblingSection) {
-                            siblingSection.content.style[dimension] = 0;
-                        });
-                    } else {
-                        $A.toggleEventRegister = 0;
+                    switch (delayType) {
+                        case 'from-first': {
+                            console.log('from-first close immediately')
+                            self.siblingSections.forEach(function(siblingSection) {
+                                siblingSection.content.style[dimension] = 0;
+                            });
+                            break;
+                        }
+                        case 'from-last': {
+                            if (!$A.toggleEventRegister) {
+                                self.siblingSections.forEach(function(siblingSection) {
+                                    siblingSection.content.style[dimension] = 0;
+                                });
+                            } else {
+                                $A.toggleEventRegister = 0;
+                            }
+                            break;
+                        }
                     }
+
+
                 }, delay);
             });
         };
