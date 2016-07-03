@@ -23,7 +23,7 @@
         width: 100%;
     }
     
-    .switch {
+    .trigger {
         background-color: pink;
         width: 100%;
     }
@@ -44,13 +44,13 @@
         bottom: 0;*/
     }
 
-    .red .switch{
+    .red .trigger{
         background-color: #D4A190;
     }
-    .green .switch{
+    .green .trigger{
         background-color: #A1D490;
     }
-    .blue .switch{
+    .blue .trigger{
         background-color: #90C3D4;
     }
     </style>
@@ -65,7 +65,7 @@
 
     <section class="accordion red">
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 1</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 2</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -90,7 +90,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 3</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -102,7 +102,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 4</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -127,7 +127,7 @@
 
     <section class="accordion blue">
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 1</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -139,7 +139,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 2</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -152,7 +152,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 3</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -164,7 +164,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 4</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -189,9 +189,9 @@
 
 
     <!-- Like an object but 1) No quotes for strings (like CSS), 2) Semicolons or commas, 3) no braces -->
-    <section class="accordion2 green" data-simple-accordion="section: .section, switch: .switch, indicator: .arrow, content: .content; close: .close, orientation: vertical; siblingBehavior: post-confine 3000;">
+    <section class="accordion2 green" data-simple-accordion="section: .section, trigger: .trigger, indicator: .arrow, content: .content; close: .close, orientation: vertical; siblingBehavior: post-confine 3000;">
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 1</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -203,7 +203,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 2</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -216,7 +216,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 3</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -228,7 +228,7 @@
             </div>
         </div>
         <div class="section">
-            <div class="switch">
+            <div class="trigger">
                 <h3>Tab 4</h3>
                 <div class='arrow'>^</div>
             </div>
@@ -272,7 +272,7 @@
 // Simple example
  var accordionInstance = simpleAccordion(accordion, {
         section: '.section',
-        switch: '.switch',
+        trigger: '.trigger',
         indicator: '.arrow',
         content: '.content',
         close: '.close',
@@ -283,7 +283,7 @@
 // jQuery instnace
 $('.accordion:nth-child(2').simpleAccordion({
         section: '.section',
-        switch: '.switch',
+        trigger: '.trigger',
         indicator: '.arrow',
         content: '.content',
         close: '.close',
@@ -308,7 +308,7 @@ $('.accordion:nth-child(2').simpleAccordion({
     // function(){
     //     sa(accordion, {
     //     section: '.section',
-    //     switch: '.switch',
+    //     trigger: '.trigger',
     //     indicator: '.arrow',
     //     content: '.content',
     //     close: '.close',

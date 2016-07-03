@@ -134,7 +134,7 @@
             sectionNodes.forEach(function(section, i) {
                 id = el[prefix + i] = {};
                 id.section = section;
-                id.switch = section.querySelector(options.switch);
+                id.trigger = section.querySelector(options.trigger);
                 id.indicator = section.querySelector(options.indicator);
                 id.content = section.querySelector(options.content);
                 id.contentBody = el[prefix + i].content.children[0];
@@ -175,7 +175,7 @@
 
             for (section in el) {
                 currentSection = el[section];
-                if (currentSection.switch === target) toggleSection(currentSection, section, $A);
+                if (currentSection.trigger === target) toggleSection(currentSection, section, $A);
             }
         };
 
