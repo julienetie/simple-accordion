@@ -4,11 +4,9 @@
 
     var simpleAccordion = function(accordion, options) {
         var $A = {};
-        $A.id = '';
         $A.el = {};
         $A.store = {};
         $A.store.contentComputedHeights = {};
-        $A.accordion = '';
         $A.sectionNodes = [];
         $A.defaults = {};
 
