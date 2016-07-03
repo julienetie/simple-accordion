@@ -134,8 +134,8 @@
             this.defaults.exposure = this.options.exposure || 0;
             this.defaults.siblingBehavior = this.options.siblingBehavior || 'immediate';
             this.defaults.throttleDelay = this.options.throttleDelay || 300;
+            this.defaults.delayTimingFn = this.options.delayTimingFn || 'animationFrame'; // 'setTimeout'
         };
-
 
         simpleAccordion.getElements = function() {
             var el = this.el,
@@ -295,6 +295,14 @@
         //     });
         // };
 
+        /**
+         * Post Confine begins from the first click not pending till the delay.
+         * @param  {[type]} selectedToggled    [description]
+         * @param  {[type]} dimension          [description]
+         * @param  {[type]} delay              [description]
+         * @param  {[type]} currentSectionName [description]
+         * @return {[type]}                    [description]
+         */
         simpleAccordion.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
             var self = this,
                 timimgFn = delay ? setTimeout : setImmediate,
