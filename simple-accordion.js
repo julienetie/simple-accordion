@@ -11,7 +11,7 @@
         $A.store.contentComputedHeights = {};
         $A.sectionNodes = [];
         $A.defaults = {};
-
+        $A.toggleEventRegister = 0;
 
         /**
          * Adds vendor prefix for CSS properties.
@@ -109,6 +109,24 @@
             }
         }
 
+        function throttle2() {
+            $A.toggleEventRegister++;
+            console.log($A.toggleEventRegister)
+        }
+
+        function debounce(fn, interval) {
+            var lastCall;
+            console.log('debounce')
+            return function() {
+                var now = Date.now();
+
+                if (!lastCall || now - lastCall > interval) {
+                    fn();
+                    lastCall = now;
+                }
+            };
+        }
+
 
         $A.init = function(accordion, options) {
             var publicMethods = {};
@@ -158,6 +176,7 @@
             this.defaults.siblingBehavior = this.options.siblingBehavior || 'immediate';
             this.defaults.throttleDelay = this.options.throttleDelay || 300;
             this.defaults.delayTimingFn = this.options.delayTimingFn || 'animationFrame'; // 'setTimeout'
+            this.defaults.delayType = this.options.delayType || 'from-last';
         };
 
 
@@ -248,8 +267,19 @@
             var preConfine = siblingBehavior.indexOf('pre-confine') >= 0 ? siblingBehavior : null;
             var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
             var selectedToggled;
+            var delayType;
             var delay;
-            var siblingsToggle
+            var siblingsToggle;
+
+            function getDelayType(postConfine, $A) {
+                if (postConfine.indexOf('from-first') >= 0) {
+                    return 'from-first';
+                } else if (postConfine.indexOf('from-first') >= 0) {
+                    return 'from-last';
+                } else {
+                    return $A.defaults.delayType;
+                }
+            }
 
             switch (siblingBehavior) {
                 case 'immediate':
@@ -267,7 +297,8 @@
                 case postConfine:
                     {
                         delay = postConfine.replace(nonNumeric, '');
-
+                        delayType = getDelayType(postConfine, $A);
+                        console.log(delayType);
                         selectedToggled = $A.toggleSelected(
                             section,
                             sectionName,
@@ -288,11 +319,12 @@
             }
         };
 
-        $A.toggleSelected = function(section, sectionName, contentClosed, dimension) {
+        $A.toggleSelected = function(section, sectionName, contentClosed, dimension, delay) {
             var self = this;
             var contentBodyDimension;
+            var timimgFn = delay ? setTimeout : setImmediate;
 
-            return new Promise(function(resolve) {
+            return new Promise(function(resolve, reject) {
                 contentBodyDimension = self.store.contentComputedHeights[sectionName];
 
                 if (contentClosed) {
@@ -304,10 +336,13 @@
                     }
                     section.content.style[dimension] = contentBodyDimension + 'px';
                 }
+
                 transitionEnd(section.content).bindEvent(function() {
-                    transitionEnd(this).unbindEvent();
+                    throttle2();
                     resolve();
+                    transitionEnd(this).unbindEvent();
                 });
+
 
             });
         }
@@ -328,14 +363,6 @@
         //     });
         // };
 
-        /**
-         * Post Confine begins from the first click not pending till the delay.
-         * @param  {[type]} selectedToggled    [description]
-         * @param  {[type]} dimension          [description]
-         * @param  {[type]} delay              [description]
-         * @param  {[type]} currentSectionName [description]
-         * @return {[type]}                    [description]
-         */
         $A.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
             var self = this;
             var timimgFn = delay ? setTimeout : setImmediate;
@@ -356,14 +383,14 @@
 
             selectedToggled.then(function(results) {
                 timingID = timimgFn(function() {
-
-                    self.siblingSections.forEach(function(siblingSection) {
-                        siblingSection.content.style[dimension] = 0;
-
-                    });
+                    if (!$A.toggleEventRegister) {
+                        self.siblingSections.forEach(function(siblingSection) {
+                            siblingSection.content.style[dimension] = 0;
+                        });
+                    } else {
+                        $A.toggleEventRegister = 0;
+                    }
                 }, delay);
-            }).catch(function(e) {
-                console.log('error', e);
             });
         };
 
