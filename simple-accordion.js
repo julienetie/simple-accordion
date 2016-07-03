@@ -196,7 +196,7 @@
 
 
         simpleAccordion.bindEvents = function(filterEvents, toggleSection, $A) {
-            var quit = false; 
+            var quit = false;
             this.accordion.addEventListener(this.defaults.event, function(e) {
                 if (quit) {
                     return;
@@ -220,20 +220,18 @@
 
             var preConfine = siblingBehavior.indexOf('pre-confine') >= 0 ? siblingBehavior : null;
             var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
-
-            var siblingBehaviors = new simpleAccordion.SiblingBehavior($A, sectionName);
             var selectedToggled, siblingsToggled;
 
             switch (siblingBehavior) {
                 case 'immediate':
                     // console.log('DO IMMEDIATE');
 
-                    siblingBehaviors.immediate();
+                    // siblingBehaviors.immediate();
                     break;
 
                 case preConfine:
-                    var delay = preConfine.replace(nonNumeric, '');
-                    siblingsToggled = $A.preConfine();
+                    // var delay = preConfine.replace(nonNumeric, '');
+                    // siblingsToggled = $A.preConfine();
 
                     break;
 
@@ -248,7 +246,7 @@
                         delay
                     );
 
-                    siblingBehaviors.postConfine(selectedToggled, dimension, delay);
+                    simpleAccordion.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
                     break;
 
                 case 'remain':
@@ -281,11 +279,30 @@
             });
         }
 
-        simpleAccordion.SiblingBehavior = function($A, currentSectionName) {
+        simpleAccordion.SiblingBehavior = {};
+
+        // simpleAccordion.SiblingBehavior.prototype.immediate = function() {
+        //     // console.log('immediate', this.siblingSectionNames, this.$A);
+        // };
+
+        // simpleAccordion.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
+        //     var self = this;
+        //     selectedToggled.then(function(results) {
+        //         self.siblingSections.forEach(function(siblingSection) {
+        //             clearTimeout(results);
+        //             siblingSection.content.style[dimension] = 0;
+        //         })
+        //     });
+        // };
+
+        simpleAccordion.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
+            var self = this,
+                timimgFn = delay ? setTimeout : setImmediate,
+                timingID;
+
             var section;
             this.$A = $A;
             this.el = $A.el;
-            this.currentSectionName = currentSectionName;
             this.siblingSections = [];
 
             // Get sibling sections
@@ -294,27 +311,6 @@
                     this.siblingSections.push(this.el[section]);
                 }
             }
-
-        }
-
-        simpleAccordion.SiblingBehavior.prototype.immediate = function() {
-            // console.log('immediate', this.siblingSectionNames, this.$A);
-        };
-
-        simpleAccordion.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
-            var self = this;
-            selectedToggled.then(function(results) {
-                self.siblingSections.forEach(function(siblingSection) {
-                    clearTimeout(results);
-                    siblingSection.content.style[dimension] = 0;
-                })
-            });
-        };
-
-        simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled, dimension, delay) {
-            var self = this,
-                timimgFn = delay ? setTimeout : setImmediate,
-                timingID;
 
             selectedToggled.then(function(results) {
                 timingID = timimgFn(function() {
@@ -329,9 +325,9 @@
             });
         };
 
-        simpleAccordion.SiblingBehavior.prototype.remain = function() {
-            // console.log('remain', this.siblingSectionNames);
-        };
+        // simpleAccordion.SiblingBehavior.prototype.remain = function() {
+        //     // console.log('remain', this.siblingSectionNames);
+        // };
 
 
         window.sa = simpleAccordion.siblingBehavior;
