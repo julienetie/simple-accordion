@@ -57,6 +57,34 @@
             return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         }
 
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this,
+                    args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
+
+        function throttle(callback, limit) {
+            var wait = false; // Initially, we're not waiting
+            return function() { // We return a throttled function
+                if (!wait) { // If we're not waiting
+                    callback.call(); // Execute users function
+                    wait = true; // Prevent future invocations
+                    setTimeout(function() { // After a period of time
+                        wait = false; // And allow future invocations
+                    }, limit);
+                }
+            }
+        }
 
         simpleAccordion.init = function(accordion, options) {
             var $A = simpleAccordion,
@@ -105,6 +133,7 @@
             this.defaults.event = this.options.event || 'click';
             this.defaults.exposure = this.options.exposure || 0;
             this.defaults.siblingBehavior = this.options.siblingBehavior || 'immediate';
+            this.defaults.throttleDelay = this.options.throttleDelay || 300;
         };
 
 
@@ -145,6 +174,7 @@
                 if (this.defaults.dynamicContent) {
                     this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(this.defaults.dimension), 10);
                 }
+                // Set content body visibility 
                 el[section].contentBody.style.visibility = this.defaults.contentBodyVisibility;
             }
         };
@@ -166,8 +196,16 @@
 
 
         simpleAccordion.bindEvents = function(filterEvents, toggleSection, $A) {
+            var quit = false; 
             this.accordion.addEventListener(this.defaults.event, function(e) {
+                if (quit) {
+                    return;
+                }
+                quit = true;
                 filterEvents(e, toggleSection, $A);
+                setTimeout(function() {
+                    quit = false;
+                }, $A.defaults.throttleDelay);
             }, false);
         };
 
@@ -175,7 +213,8 @@
         simpleAccordion.toggleSection = function(section, sectionName, $A) {
             var dimension = $A.defaults.dimension,
                 contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(dimension), 10),
-                siblingBehavior = $A.defaults.siblingBehavior;
+                siblingBehavior = $A.defaults.siblingBehavior,
+                nonNumeric = /[^\d.]/g;
 
             // console.log(siblingBehavior.indexOf('preconfine') > -1)
 
@@ -183,7 +222,7 @@
             var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
 
             var siblingBehaviors = new simpleAccordion.SiblingBehavior($A, sectionName);
-            var selectedToggled;
+            var selectedToggled, siblingsToggled;
 
             switch (siblingBehavior) {
                 case 'immediate':
@@ -193,33 +232,23 @@
                     break;
 
                 case preConfine:
-                    // console.log('DO PRE CLOSE STUFF');
-                    siblingBehaviors.preConfine();
+                    var delay = preConfine.replace(nonNumeric, '');
+                    siblingsToggled = $A.preConfine();
+
                     break;
 
                 case postConfine:
-                    var delay = postConfine.replace(/[^\d.]/g, '');
-                    if (delay) {
-                        selectedToggled = $A.toggleSelected(
-                            section,
-                            sectionName,
-                            contentClosed,
-                            dimension,
-                            setTimeout,
-                            delay
-                        );
-                    } else {
-                        selectedToggled = $A.toggleSelected(
-                            section,
-                            sectionName,
-                            contentClosed,
-                            dimension,
-                            setImmediate,
-                            delay
-                        );
-                    }
+                    var delay = postConfine.replace(nonNumeric, '');
 
-                    siblingBehaviors.postConfine(selectedToggled, dimension);
+                    selectedToggled = $A.toggleSelected(
+                        section,
+                        sectionName,
+                        contentClosed,
+                        dimension,
+                        delay
+                    );
+
+                    siblingBehaviors.postConfine(selectedToggled, dimension, delay);
                     break;
 
                 case 'remain':
@@ -227,40 +256,28 @@
                     siblingBehaviors.remain();
                     break;
             }
-
-
-            // Defualt open triggered section content 
-            // if (contentClosed) {
-            //     section.content.style.height = 0;
-            // } else {
-            //     // Get computed dimension if content is dynamic
-            //     if (!$A.defaults.dynamicContent) {
-            //         $A.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue($A.defaults.dimension), 10);
-            //     }
-            //     section.content.style.height = contentBodyDimension + 'px';
-            // }
-
         };
 
-        simpleAccordion.toggleSelected = function(section, sectionName, contentClosed, dimension, timimgFn, delay) {
-            var self = this, timeoutID;
+        simpleAccordion.toggleSelected = function(section, sectionName, contentClosed, dimension) {
+            var self = this;
+
             return new Promise(function(resolve) {
-                timeoutID = timimgFn(function() {
-                    var contentBodyDimension = self.store.contentComputedHeights[sectionName]
-                    if (contentClosed) {
-                        section.content.style[dimension] = 0;
-                    } else {
-                        // Get computed dimension if content is dynamic
-                        if (self.defaults.dynamicContent) {
-                            self.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue(self.defaults.dimension), 10);
-                        }
-                        section.content.style[dimension] = contentBodyDimension + 'px';
+
+                var contentBodyDimension = self.store.contentComputedHeights[sectionName];
+                if (contentClosed) {
+                    section.content.style[dimension] = 0;
+                } else {
+                    // Get computed dimension if content is dynamic
+                    if (self.defaults.dynamicContent) {
+                        self.store.contentComputedHeights[sectionName] = parseInt(window.getComputedStyle(section.contentBody, null).getPropertyValue(self.defaults.dimension), 10);
                     }
-                    transitionEnd(section.content).bindEvent(function() {
-                        resolve(timeoutID);
-                        transitionEnd(this).unbindEvent();
-                    });
-                }, delay);
+                    section.content.style[dimension] = contentBodyDimension + 'px';
+                }
+                transitionEnd(section.content).bindEvent(function() {
+                    transitionEnd(this).unbindEvent();
+                    resolve();
+                });
+
             });
         }
 
@@ -284,17 +301,31 @@
             // console.log('immediate', this.siblingSectionNames, this.$A);
         };
 
-        simpleAccordion.SiblingBehavior.prototype.preConfine = function() {
-            // console.log('preConfine', this.siblingSectionNames);
-        };
-
-        simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled, dimension) {
+        simpleAccordion.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
             var self = this;
             selectedToggled.then(function(results) {
-                self.siblingSections.forEach(function(siblingSection){
+                self.siblingSections.forEach(function(siblingSection) {
                     clearTimeout(results);
                     siblingSection.content.style[dimension] = 0;
                 })
+            });
+        };
+
+        simpleAccordion.SiblingBehavior.prototype.postConfine = function(selectedToggled, dimension, delay) {
+            var self = this,
+                timimgFn = delay ? setTimeout : setImmediate,
+                timingID;
+
+            selectedToggled.then(function(results) {
+                timingID = timimgFn(function() {
+
+                    self.siblingSections.forEach(function(siblingSection) {
+                        siblingSection.content.style[dimension] = 0;
+
+                    });
+                }, delay);
+            }).catch(function(e) {
+                console.log('error', e);
             });
         };
 
