@@ -1,4 +1,5 @@
 (function(window, $) {
+    'use strict';
     /////////////////////////
     /////////////////////////
 
@@ -75,7 +76,7 @@
         }
 
         $A.init = function(accordion, options) {
-            var public = {};
+            var publicMethods = {};
             var uniqueID = '' + Math.random(Date.now());
             var isSelectorAString = typeof accordion === 'string';
             var isSelectorAnElement = accordion.nodeType === 1;
@@ -105,8 +106,8 @@
             $A.bindEvents($A.filterEvents, $A.toggleSection, this);
 
             // console.info($A.id, $A.accordion)
-            public.destroy = $A.destroy;
-            return public;
+            publicMethods.destroy = $A.destroy;
+            return publicMethods;
         };
 
 
