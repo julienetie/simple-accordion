@@ -1,60 +1,74 @@
 (function(window, $) {
-        'use strict';
-        /////////////////////////
-        /////////////////////////
+    'use strict';
+    /////////////////////////
+    /////////////////////////
 
-        var simpleAccordion = function(accordion, options) {
-            var $A = {};
+    var simpleAccordion = function(accordion, options) {
+        var $A = {};
 
-            $A.el = {};
-            $A.store = {};
-            $A.store.contentComputedHeights = {};
-            $A.sectionNodes = [];
-            $A.defaults = {};
+        $A.el = {};
+        $A.store = {};
+        $A.store.contentComputedHeights = {};
+        $A.sectionNodes = [];
+        $A.defaults = {};
 
 
-            /**
-             * Adds vendor prefix for CSS properties.
-             * @See {@Link http://addyosmani.com/polyfillthehtml5gaps/slides/#78}
-             * @param  {HTMLElement} 
-             * @return {String}      Vendor prefix
-             */
-            function fixCSSProperty(property) {
-                // Upper case first vendor prefixes
-                var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'];
-                var prefixesLength = prefixes.length;
-                var el = document.createElement('div');
-                var elStyle = el.style;
-                var upperCaseFirstProperty = property.charAt(0).toUpperCase() + property.slice(1);
+        /**
+         * Adds vendor prefix for CSS properties.
+         * @See {@Link http://addyosmani.com/polyfillthehtml5gaps/slides/#78}
+         * @param  {HTMLElement} 
+         * @return {String}      Vendor prefix
+         */
+        function fixCSSProperty(property) {
+            // Upper case first vendor prefixes.
+            var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'];
+            var prefixesLength = prefixes.length;
+            var el = document.createElement('div');
+            var elStyle = el.style;
+            var upperCaseFirstProperty = property.charAt(0).toUpperCase() + property.slice(1);
 
-                // Use standard property if supported
-                if (property in elStyle) return property;
+            // Use standard property if supported.
+            if (property in elStyle) return property;
 
-                // Use prefixed property if supported
-                for (prefixesLength; prefixesLength--;) {
-                    if ((prefixes[prefixesLength] + upperCaseFirstProperty) in elStyle) {
-                        return (prefixes[prefixesLength] + upperCaseFirstProperty);
-                    }
+            // Use prefixed property if supported.
+            for (prefixesLength; prefixesLength--;) {
+                if ((prefixes[prefixesLength] + upperCaseFirstProperty) in elStyle) {
+                    return (prefixes[prefixesLength] + upperCaseFirstProperty);
                 }
             }
+        }
 
 
-            function getOptionsViaDataset(accordion, options) {
-                var dataSimpleAccordion = accordion.getAttribute('data-simple-accordion');
-                var optionsFromDataset = {};
-                var dataArray;
+        /**
+         * Retrieve options supplied via the data-simple-accordion attribute.
+         * Options from data-simple-accordion are declaired similarly to CSS
+         * properties and values. Some options may not be declaired using 
+         * data-simple-accordion. Check the documentation for more information.
+         * @param  {String} accordion   The accordion element
+         * @param  {Undefined} options  The presumably undefined options
+         * @return {Object}             data-simple-accordion data as an object
+         */
+        function getOptionsViaDataset(accordion, options) {
+            var dataSimpleAccordion = accordion.getAttribute('data-simple-accordion');
+            var optionsFromDataset = {};
+            var dataArray;
 
-                function keyValuePairsToArray(pair) {
-                    return pair.split(':').map(function(part) {
-                        return part.replace(';', '').trim();
-                    });
-                }
+            // For each array value (as key value pair string), convert each to array.
+            function keyValuePairsToArray(pair) {
+                return pair.split(':').map(function(part) {
+                    return part.replace(';', '').trim();
+                });
+            }
 
-                function assignToObject(pairAsArray) {
-                    optionsFromDataset[pairAsArray[0]] = pairAsArray[1];
-                };
+            // Assing optionsFromDataset from 2D array with first keys as property names assgined to 2nd key values.
+            function assignToObject(pairAsArray) {
+                optionsFromDataset[pairAsArray[0]] = pairAsArray[1];
+            };
 
+            // Ensures there are no options and that the dataset was retrieved.
             if (!options && dataSimpleAccordion) {
+
+                // Convert all semi-colons to commas, then split into an array. 
                 dataArray = dataSimpleAccordion.replace(/;/ig, ',').split(',');
                 dataArray
                     .map(keyValuePairsToArray)
@@ -66,11 +80,22 @@
         }
 
 
+        /**
+         * A component of a unqiue identifier for the simpleAccordion instance. 
+         * @return {String}     Alpha characters
+         */
         function randomReference() {
             return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         }
 
 
+        /**
+         * Reduces overclicking/ touching by throttling the callback to be 
+         * delayed until the set delay. 
+         * @param  {Function}   callback  handler
+         * @param  {Number}     delay    delay in milliseconds
+         * @return {Function}            Throttle inner function without wait
+         */
         function throttle(callback, delay) {
             var wait = false;
             return function() {
