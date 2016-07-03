@@ -80,25 +80,27 @@
             var uniqueID = '' + Math.random(Date.now());
             var isSelectorAString = typeof accordion === 'string';
             var isSelectorAnElement = accordion.nodeType === 1;
-            var isOptionsAnObjectLiteral;
+            var optionsIsOfTypeObject;
+            var accordioElement;
+            var optionsAsObject;
 
             if (options) {
-                isOptionsAnObjectLiteral = options.constructor === {}.constructor;
+                optionsIsOfTypeObject = options.constructor === {}.constructor;
+                optionsAsObject = options;
             } else {
-                isOptionsAnObjectLiteral = null;
+                optionsIsOfTypeObject = false;
             }
 
-            accordion = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
+            accordioElement = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
 
-            if (options) {
-                if (!isOptionsAnObjectLiteral) console.error('Options should be an object literal');
+            if (optionsIsOfTypeObject) {
+                if (!optionsIsOfTypeObject) console.error('Options should be an object literal'); return;
             } else {
-                options = getOptionsViaDataset(accordion, options);
+                optionsAsObject = getOptionsViaDataset(accordioElement, options);
             }
 
-
-            $A.options = options;
-            $A.accordion = accordion;
+            $A.options = optionsAsObject;
+            $A.accordion = accordioElement;
             $A.id = randomReference() + uniqueID.substr(uniqueID.length - 5, uniqueID.length - 1);
             $A.setDefaults();
             $A.getElements();
@@ -122,6 +124,7 @@
             this.defaults.throttleDelay = this.options.throttleDelay || 300;
             this.defaults.delayTimingFn = this.options.delayTimingFn || 'animationFrame'; // 'setTimeout'
         };
+
 
         $A.getElements = function() {
             var el = this.el;
