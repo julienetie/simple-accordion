@@ -1,55 +1,64 @@
 (function(window, $) {
-    'use strict';
-    /////////////////////////
-    /////////////////////////
+        'use strict';
+        /////////////////////////
+        /////////////////////////
 
-    var simpleAccordion = function(accordion, options) {
-        var $A = {};
+        var simpleAccordion = function(accordion, options) {
+            var $A = {};
 
-        $A.el = {};
-        $A.store = {};
-        $A.store.contentComputedHeights = {};
-        $A.sectionNodes = [];
-        $A.defaults = {};
+            $A.el = {};
+            $A.store = {};
+            $A.store.contentComputedHeights = {};
+            $A.sectionNodes = [];
+            $A.defaults = {};
 
 
-        /**
-         * Adds vendor prefix for CSS properties.
-         * @See {@Link http://addyosmani.com/polyfillthehtml5gaps/slides/#78}
-         * @param  {HTMLElement} 
-         * @return {String}      Vendor prefix
-         */
-        function fix(property) {
-            var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'];
-            var prefixesLength = prefixes.length;
-            var el = document.createElement('div');
-            var elStyle = el.style;
-            var upperCaseFirstProperty = property.charAt(0).toUpperCase() + property.slice(1);
+            /**
+             * Adds vendor prefix for CSS properties.
+             * @See {@Link http://addyosmani.com/polyfillthehtml5gaps/slides/#78}
+             * @param  {HTMLElement} 
+             * @return {String}      Vendor prefix
+             */
+            function fixCSSProperty(property) {
+                // Upper case first vendor prefixes
+                var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'];
+                var prefixesLength = prefixes.length;
+                var el = document.createElement('div');
+                var elStyle = el.style;
+                var upperCaseFirstProperty = property.charAt(0).toUpperCase() + property.slice(1);
 
-            if (property in elStyle) return property;
+                // Use standard property if supported
+                if (property in elStyle) return property;
 
-            for (prefixesLength; prefixesLength--;) {
-                if ((prefixes[prefixesLength] + upperCaseFirstProperty) in elStyle) {
-                    return (prefixes[prefixesLength] + upperCaseFirstProperty);
+                // Use prefixed property if supported
+                for (prefixesLength; prefixesLength--;) {
+                    if ((prefixes[prefixesLength] + upperCaseFirstProperty) in elStyle) {
+                        return (prefixes[prefixesLength] + upperCaseFirstProperty);
+                    }
                 }
             }
-        }
 
 
-        function getOptionsViaDataset(accordion, options) {
-            var data = accordion.getAttribute('data-simple-accordion');
-            var optionsFromDataset = {};
-            var dataArray;
+            function getOptionsViaDataset(accordion, options) {
+                var dataSimpleAccordion = accordion.getAttribute('data-simple-accordion');
+                var optionsFromDataset = {};
+                var dataArray;
 
-            if (!options && accordion.getAttribute('data-simple-accordion')) {
-                dataArray = data.replace(/;/ig, ',').split(',');
-                dataArray.map(function(pair) {
+                function keyValuePairsToArray(pair) {
                     return pair.split(':').map(function(part) {
                         return part.replace(';', '').trim();
                     });
-                }).forEach(function(pairAsArray) {
+                }
+
+                function assignToObject(pairAsArray) {
                     optionsFromDataset[pairAsArray[0]] = pairAsArray[1];
-                });
+                };
+
+            if (!options && dataSimpleAccordion) {
+                dataArray = dataSimpleAccordion.replace(/;/ig, ',').split(',');
+                dataArray
+                    .map(keyValuePairsToArray)
+                    .forEach(assignToObject);
             } else {
                 console.error('No object or data-simple-accordion options found');
             }
@@ -62,18 +71,19 @@
         }
 
 
-        function throttle(callback, limit) {
-            var wait = false; // Initially, we're not waiting
-            return function() { // We return a throttled function
-                if (!wait) { // If we're not waiting
-                    callback.call(); // Execute users function
-                    wait = true; // Prevent future invocations
-                    setTimeout(function() { // After a period of time
-                        wait = false; // And allow future invocations
-                    }, limit);
+        function throttle(callback, delay) {
+            var wait = false;
+            return function() {
+                if (!wait) {
+                    callback.call();
+                    wait = true;
+                    setTimeout(function() {
+                        wait = false;
+                    }, delay);
                 }
             }
         }
+
 
         $A.init = function(accordion, options) {
             var publicMethods = {};
@@ -94,7 +104,8 @@
             accordioElement = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
 
             if (optionsIsOfTypeObject) {
-                if (!optionsIsOfTypeObject) console.error('Options should be an object literal'); return;
+                if (!optionsIsOfTypeObject) console.error('Options should be an object literal');
+                return;
             } else {
                 optionsAsObject = getOptionsViaDataset(accordioElement, options);
             }
@@ -107,7 +118,6 @@
             $A.setInitialState();
             $A.bindEvents($A.filterEvents, $A.toggleSection, this);
 
-            // console.info($A.id, $A.accordion)
             publicMethods.destroy = $A.destroy;
             return publicMethods;
         };
@@ -163,7 +173,7 @@
                 // Set content sections to zero dimension
                 elSection.content.style[defaults.dimension] = defaults.exposure;
                 // Set content transition 
-                elSection.content.style[fix('transition')] = 'all .3s ease';
+                elSection.content.style[fixCSSProperty('transition')] = 'all .3s ease';
                 // Get computed dimension immediately if content body is not dynamic
                 if (defaults.dynamicContent) {
                     this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(defaults.dimension), 10);
@@ -214,7 +224,7 @@
             var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
             var selectedToggled;
             var delay;
-            var siblingsToggled;
+            var siblingsToggle
 
             switch (siblingBehavior) {
                 case 'immediate':
@@ -306,15 +316,16 @@
             var timimgFn = delay ? setTimeout : setImmediate;
             var timingID;
             var section;
+            var el = $A.el;
 
+            this.el = el;
             this.$A = $A;
-            this.el = $A.el;
             this.siblingSections = [];
 
             // Get sibling sections
-            for (section in this.el) {
+            for (section in el) {
                 if (section !== currentSectionName) {
-                    this.siblingSections.push(this.el[section]);
+                    this.siblingSections.push(el[section]);
                 }
             }
 
