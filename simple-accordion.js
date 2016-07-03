@@ -4,6 +4,7 @@
 
     var simpleAccordion = function(accordion, options) {
         var $A = {};
+
         $A.el = {};
         $A.store = {};
         $A.store.contentComputedHeights = {};
@@ -18,11 +19,11 @@
          * @return {String}      Vendor prefix
          */
         function fix(property) {
-            var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'],
-                prefixesLength = prefixes.length,
-                el = document.createElement('div'),
-                elStyle = el.style;
-                upperCaseFirst = property.charAt(0).toUpperCase() + property.slice(1);
+            var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'];
+            var prefixesLength = prefixes.length;
+            var el = document.createElement('div');
+            var elStyle = el.style;
+            var upperCaseFirst = property.charAt(0).toUpperCase() + property.slice(1);
 
             if (property in elStyle) {
                 return property;
@@ -37,8 +38,9 @@
 
 
         function getOptionsViaDataset(accordion, options) {
-            var data = accordion.getAttribute('data-simple-accordion'),
-                dataArray, optionsFromDataset = {};
+            var data = accordion.getAttribute('data-simple-accordion');
+            var optionsFromDataset = {};
+            var dataArray;
 
             if (!options && accordion.getAttribute('data-simple-accordion')) {
                 dataArray = data.replace(/;/ig, ',').split(',');
@@ -60,21 +62,6 @@
             return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
         }
 
-        function debounce(func, wait, immediate) {
-            var timeout;
-            return function() {
-                var context = this,
-                    args = arguments;
-                var later = function() {
-                    timeout = null;
-                    if (!immediate) func.apply(context, args);
-                };
-                var callNow = immediate && !timeout;
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-                if (callNow) func.apply(context, args);
-            };
-        };
 
         function throttle(callback, limit) {
             var wait = false; // Initially, we're not waiting
@@ -90,12 +77,12 @@
         }
 
         $A.init = function(accordion, options) {
-            var public = {},
-                uniqueID = '' + Math.random(Date.now());
+            var public = {};
+            var uniqueID = '' + Math.random(Date.now());
+            var isSelectorAString = typeof accordion === 'string';
+            var isSelectorAnElement = accordion.nodeType === 1;
+            var isOptionsAnObjectLiteral;
 
-            var isSelectorAString = typeof accordion === 'string',
-                isSelectorAnElement = accordion.nodeType === 1,
-                isOptionsAnObjectLiteral;
             if (options) {
                 isOptionsAnObjectLiteral = options.constructor === {}.constructor;
             } else {
@@ -140,11 +127,11 @@
         };
 
         $A.getElements = function() {
-            var el = this.el,
-                sectionNodes = this.sectionNodes,
-                options = this.options,
-                prefix = 'section-',
-                id;
+            var el = this.el;
+            var sectionNodes = this.sectionNodes;
+            var options = this.options;
+            var prefix = 'section-';
+            var id;
 
             sectionNodes = sectionNodes.slice.call(this.accordion.querySelectorAll(options.section));
 
@@ -161,11 +148,13 @@
 
 
         $A.setInitialState = function() {
-            var el = this.el,
-                section;
+            var el = this.el;
+            var section;
+            var contentBody;
+
             for (section in el) {
                 // Get contentBody element
-                var contentBody = el[section].contentBody;
+                contentBody = el[section].contentBody;
                 // Hide contents overflow
                 el[section].content.style.overflow = this.defaults.contentOverflow;
                 // Set content sections to zero dimension
@@ -183,10 +172,10 @@
 
 
         $A.filterEvents = function(e, toggleSection, $A) {
-            var el = $A.el,
-                target = e.target,
-                currentSection,
-                section;
+            var el = $A.el;
+            var target = e.target;
+            var currentSection;
+            var section;
 
             for (section in el) {
                 currentSection = el[section];
@@ -199,6 +188,7 @@
 
         $A.bindEvents = function(filterEvents, toggleSection, $A) {
             var quit = false;
+
             this.accordion.addEventListener(this.defaults.event, function(e) {
                 if (quit) {
                     return;
@@ -213,57 +203,59 @@
 
 
         $A.toggleSection = function(section, sectionName, $A) {
-            var dimension = $A.defaults.dimension,
-                contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(dimension), 10),
-                siblingBehavior = $A.defaults.siblingBehavior,
-                nonNumeric = /[^\d.]/g;
-
-            // console.log(siblingBehavior.indexOf('preconfine') > -1)
-
+            var dimension = $A.defaults.dimension;
+            var contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(dimension), 10);
+            var siblingBehavior = $A.defaults.siblingBehavior;
+            var nonNumeric = /[^\d.]/g;
             var preConfine = siblingBehavior.indexOf('pre-confine') >= 0 ? siblingBehavior : null;
             var postConfine = siblingBehavior.indexOf('post-confine') >= 0 ? siblingBehavior : null;
-            var selectedToggled, siblingsToggled;
+            var selectedToggled;
+            var delay;
+            var siblingsToggled;
 
             switch (siblingBehavior) {
                 case 'immediate':
-                    // console.log('DO IMMEDIATE');
-
-                    // siblingBehaviors.immediate();
-                    break;
-
+                    {
+                        // console.log('DO IMMEDIATE');
+                        // siblingBehaviors.immediate();
+                        break;
+                    }
                 case preConfine:
-                    // var delay = preConfine.replace(nonNumeric, '');
-                    // siblingsToggled = $A.preConfine();
-
-                    break;
-
+                    {
+                        // var delay = preConfine.replace(nonNumeric, '');
+                        // siblingsToggled = $A.preConfine();
+                        break;
+                    }
                 case postConfine:
-                    var delay = postConfine.replace(nonNumeric, '');
+                    {
+                        delay = postConfine.replace(nonNumeric, '');
 
-                    selectedToggled = $A.toggleSelected(
-                        section,
-                        sectionName,
-                        contentClosed,
-                        dimension,
-                        delay
-                    );
-
-                    $A.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
-                    break;
-
+                        selectedToggled = $A.toggleSelected(
+                            section,
+                            sectionName,
+                            contentClosed,
+                            dimension,
+                            delay
+                        );
+                        $A.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
+                        break;
+                    }
                 case 'remain':
-                    // console.log('SIBLINGS REMAIN OPEN');
-                    siblingBehaviors.remain();
-                    break;
+                    {
+                        // console.log('SIBLINGS REMAIN OPEN');
+                        siblingBehaviors.remain();
+                        break;
+                    }
             }
         };
 
         $A.toggleSelected = function(section, sectionName, contentClosed, dimension) {
             var self = this;
+            var contentBodyDimension;
 
             return new Promise(function(resolve) {
+                contentBodyDimension = self.store.contentComputedHeights[sectionName];
 
-                var contentBodyDimension = self.store.contentComputedHeights[sectionName];
                 if (contentClosed) {
                     section.content.style[dimension] = 0;
                 } else {
@@ -306,11 +298,11 @@
          * @return {[type]}                    [description]
          */
         $A.SiblingBehavior.postConfine = function(selectedToggled, dimension, delay, currentSectionName) {
-            var self = this,
-                timimgFn = delay ? setTimeout : setImmediate,
-                timingID;
-
+            var self = this;
+            var timimgFn = delay ? setTimeout : setImmediate;
+            var timingID;
             var section;
+
             this.$A = $A;
             this.el = $A.el;
             this.siblingSections = [];
@@ -338,6 +330,9 @@
         // $A.SiblingBehavior.prototype.remain = function() {
         //     // console.log('remain', this.siblingSectionNames);
         // };
+        // 
+
+        $A.childrenBehavior = {};
 
         $A.destroy = function() {
             $A.accordion.removeEventListener($A.defaults.event, $A.filterEvents);
