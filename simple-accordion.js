@@ -11,19 +11,26 @@
         $A.defaults = {};
 
 
-        // http://addyosmani.com/polyfillthehtml5gaps/slides/#78
-        function fix(prop) {
+        /**
+         * Adds vendor prefix for CSS properties.
+         * @See {@Link http://addyosmani.com/polyfillthehtml5gaps/slides/#78}
+         * @param  {HTMLElement} 
+         * @return {String}      Vendor prefix
+         */
+        function fix(property) {
             var prefixes = ['Moz', 'Khtml', 'Webkit', 'O', 'ms'],
-                elem = document.createElement('div'),
-                upper = prop.charAt(0).toUpperCase() + prop.slice(1);
+                prefixesLength = prefixes.length,
+                el = document.createElement('div'),
+                elStyle = el.style;
+                upperCaseFirst = property.charAt(0).toUpperCase() + property.slice(1);
 
-            if (prop in elem.style) {
-                return prop;
+            if (property in elStyle) {
+                return property;
             }
 
-            for (var len = prefixes.length; len--;) {
-                if ((prefixes[len] + upper) in elem.style) {
-                    return (prefixes[len] + upper);
+            for (prefixesLength; prefixesLength--;) {
+                if ((prefixes[prefixesLength] + upperCaseFirst) in elStyle) {
+                    return (prefixes[prefixesLength] + upperCaseFirst);
                 }
             }
         }
@@ -32,7 +39,6 @@
         function getOptionsViaDataset(accordion, options) {
             var data = accordion.getAttribute('data-simple-accordion'),
                 dataArray, optionsFromDataset = {};
-
 
             if (!options && accordion.getAttribute('data-simple-accordion')) {
                 dataArray = data.replace(/;/ig, ',').split(',');
