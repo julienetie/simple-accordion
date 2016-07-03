@@ -24,13 +24,13 @@
             var prefixesLength = prefixes.length;
             var el = document.createElement('div');
             var elStyle = el.style;
-            var upperCaseFirst = property.charAt(0).toUpperCase() + property.slice(1);
+            var upperCaseFirstProperty = property.charAt(0).toUpperCase() + property.slice(1);
 
             if (property in elStyle) return property;
 
             for (prefixesLength; prefixesLength--;) {
-                if ((prefixes[prefixesLength] + upperCaseFirst) in elStyle) {
-                    return (prefixes[prefixesLength] + upperCaseFirst);
+                if ((prefixes[prefixesLength] + upperCaseFirstProperty) in elStyle) {
+                    return (prefixes[prefixesLength] + upperCaseFirstProperty);
                 }
             }
         }
@@ -148,22 +148,25 @@
             var el = this.el;
             var section;
             var contentBody;
+            var elSection;
+            var defaults = this.defaults;
 
             for (section in el) {
+                elSection = el[section];
                 // Get contentBody element
-                contentBody = el[section].contentBody;
+                contentBody = elSection.contentBody;
                 // Hide contents overflow
-                el[section].content.style.overflow = this.defaults.contentOverflow;
+                elSection.content.style.overflow = defaults.contentOverflow;
                 // Set content sections to zero dimension
-                el[section].content.style[this.defaults.dimension] = this.defaults.exposure;
+                elSection.content.style[defaults.dimension] = defaults.exposure;
                 // Set content transition 
-                el[section].content.style[fix('transition')] = 'all .3s ease';
+                elSection.content.style[fix('transition')] = 'all .3s ease';
                 // Get computed dimension immediately if content body is not dynamic
-                if (this.defaults.dynamicContent) {
-                    this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(this.defaults.dimension), 10);
+                if (defaults.dynamicContent) {
+                    this.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(defaults.dimension), 10);
                 }
                 // Set content body visibility 
-                el[section].contentBody.style.visibility = this.defaults.contentBodyVisibility;
+                elSection.contentBody.style.visibility = defaults.contentBodyVisibility;
             }
         };
 
@@ -182,16 +185,19 @@
 
 
         $A.bindEvents = function(filterEvents, toggleSection, $A) {
-            var quit = false;
+            var prevent = false;
 
             this.accordion.addEventListener(this.defaults.event, function(e) {
-                if (quit) return;
+                if (prevent) return;
 
-                quit = true;
+                prevent = true;
+
                 filterEvents(e, toggleSection, $A);
+
                 setTimeout(function() {
-                    quit = false;
+                    prevent = false;
                 }, $A.defaults.throttleDelay);
+
             }, false);
         };
 
@@ -231,6 +237,7 @@
                             dimension,
                             delay
                         );
+
                         $A.SiblingBehavior.postConfine(selectedToggled, dimension, delay, sectionName);
                         break;
                     }
