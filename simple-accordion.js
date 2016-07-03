@@ -25,9 +25,7 @@
             var elStyle = el.style;
             var upperCaseFirst = property.charAt(0).toUpperCase() + property.slice(1);
 
-            if (property in elStyle) {
-                return property;
-            }
+            if (property in elStyle) return property;
 
             for (prefixesLength; prefixesLength--;) {
                 if ((prefixes[prefixesLength] + upperCaseFirst) in elStyle) {
@@ -92,9 +90,7 @@
             accordion = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
 
             if (options) {
-                if (!isOptionsAnObjectLiteral) {
-                    console.error('Options should be an object literal');
-                }
+                if (!isOptionsAnObjectLiteral) console.error('Options should be an object literal');
             } else {
                 options = getOptionsViaDataset(accordion, options);
             }
@@ -179,9 +175,7 @@
 
             for (section in el) {
                 currentSection = el[section];
-                if (currentSection.switch === target) {
-                    toggleSection(currentSection, section, $A);
-                }
+                if (currentSection.switch === target) toggleSection(currentSection, section, $A);
             }
         };
 
@@ -190,9 +184,8 @@
             var quit = false;
 
             this.accordion.addEventListener(this.defaults.event, function(e) {
-                if (quit) {
-                    return;
-                }
+                if (quit) return;
+
                 quit = true;
                 filterEvents(e, toggleSection, $A);
                 setTimeout(function() {
