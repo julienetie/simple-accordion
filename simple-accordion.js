@@ -287,7 +287,7 @@
                 case 'immediate':
                     {
                         console.log('DO IMMEDIATE');
-                        $A.siblingBehaviors.immediate();
+                        $A.siblingBehavior.immediate();
                         break;
                     }
                 case preConfine:
@@ -311,7 +311,7 @@
                             delay
                         );
 
-                        $A.SiblingBehavior.postConfine(selectedToggled, dimension, delayType, delay, sectionName);
+                        $A.siblingBehavior.postConfine(selectedToggled, dimension, delayType, delay, sectionName);
                         break;
                     }
                 case 'remain':
@@ -351,13 +351,13 @@
             });
         }
 
-        $A.SiblingBehavior = {};
+        $A.siblingBehavior = {};
 
-        $A.SiblingBehavior.immediate = function() {
+        $A.siblingBehavior.immediate = function() {
             console.log('immediate', this);
         };
 
-        // $A.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
+        // $A.siblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
         //     var self = this;
         //     selectedToggled.then(function(results) {
         //         self.siblingSections.forEach(function(siblingSection) {
@@ -367,7 +367,7 @@
         //     });
         // };
 
-        $A.SiblingBehavior.postConfine = function(selectedToggled, dimension, delayType, delay, currentSectionName) {
+        $A.siblingBehavior.postConfine = function(selectedToggled, dimension, delayType, delay, currentSectionName) {
             var self = this;
             var timimgFn = delay ? setTimeout : setImmediate;
             var timingID;
@@ -410,7 +410,7 @@
             });
         };
 
-        // $A.SiblingBehavior.prototype.remain = function() {
+        // $A.siblingBehavior.prototype.remain = function() {
         //     // console.log('remain', this.siblingSectionNames);
         // };
         // 
