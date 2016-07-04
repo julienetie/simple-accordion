@@ -262,7 +262,7 @@
                 console.log('NEW SET', self.store.contentComputedHeights[section])
             }
 
-            resizilla(windowSizeUpdate, 10000, false);
+            resizilla(windowSizeUpdate, 200, true);
 
         };
 
