@@ -147,14 +147,14 @@
             accordioElement = isSelectorAnElement ? accordion : isSelectorAString ? document.querySelector(accordion) : console.error('nodeType is incorrect');
 
             if (optionsIsOfTypeObject) {
-                if (!optionsIsOfTypeObject) console.error('Options should be an object literal');
-                return;
+                // if (!optionsIsOfTypeObject) console.error('Options should be an object literal');
+                // return;
             } else {
                 optionsAsObject = getOptionsViaDataset(accordioElement, options);
             }
 
             $A.options = optionsAsObject;
-            $A.accordion = accordioElement;
+            $A.accordion = accordioElement; console.log($A.accordion)
             $A.id = randomReference() + uniqueID.substr(uniqueID.length - 5, uniqueID.length - 1);
             $A.setDefaults();
             $A.getElements();
@@ -228,19 +228,6 @@
         };
 
 
-        $A.filterEvents = function(e, toggleSection, $A) {
-            var el = $A.el;
-            var target = e.target;
-            var currentSection;
-            var section;
-
-            for (section in el) {
-                currentSection = el[section];
-                if (currentSection.trigger === target) toggleSection(currentSection, section, $A);
-            }
-        };
-
-
         $A.bindEvents = function(filterEvents, toggleSection, $A) {
             var prevent = false;
 
@@ -259,6 +246,19 @@
         };
 
 
+        $A.filterEvents = function(e, toggleSection, $A) {
+            var el = $A.el;
+            var target = e.target;
+            var currentSection;
+            var section;
+
+            for (section in el) {
+                currentSection = el[section];
+                if (currentSection.trigger === target) toggleSection(currentSection, section, $A);
+            }
+        };
+
+
         $A.toggleSection = function(section, sectionName, $A) {
             var dimension = $A.defaults.dimension;
             var contentClosed = parseInt(window.getComputedStyle(section.content, null).getPropertyValue(dimension), 10);
@@ -270,6 +270,8 @@
             var delayType;
             var delay;
             var siblingsToggle;
+
+            console.log(siblingBehavior)
 
             function getDelayType(postConfine, $A) {
                 if (postConfine.indexOf('from-first') >= 0) {
@@ -284,8 +286,8 @@
             switch (siblingBehavior) {
                 case 'immediate':
                     {
-                        // console.log('DO IMMEDIATE');
-                        // siblingBehaviors.immediate();
+                        console.log('DO IMMEDIATE');
+                        $A.siblingBehaviors.immediate();
                         break;
                     }
                 case preConfine:
@@ -298,7 +300,7 @@
                     {
                         delay = postConfine.replace(nonNumeric, '');
                         delayType = getDelayType(postConfine, $A);
-
+ 
                         console.log(delayType);
 
                         selectedToggled = $A.toggleSelected(
@@ -351,9 +353,9 @@
 
         $A.SiblingBehavior = {};
 
-        // $A.SiblingBehavior.prototype.immediate = function() {
-        //     // console.log('immediate', this.siblingSectionNames, this.$A);
-        // };
+        $A.SiblingBehavior.immediate = function() {
+            console.log('immediate', this);
+        };
 
         // $A.SiblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
         //     var self = this;
@@ -404,8 +406,6 @@
                             break;
                         }
                     }
-
-
                 }, delay);
             });
         };

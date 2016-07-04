@@ -270,7 +270,7 @@
     var accordion = '.accordion';
 
 // Simple example
- var accordionInstance = simpleAccordion(accordion, {
+ var accordionInstance = simpleAccordion('.accordion', {
         section: '.section',
         trigger: '.trigger',
         indicator: '.arrow',
@@ -281,15 +281,15 @@
     });
 
 // jQuery instnace
-$('.accordion:nth-child(2').simpleAccordion({
-        section: '.section',
-        trigger: '.trigger',
-        indicator: '.arrow',
-        content: '.content',
-        close: '.close',
-        orientation: 'vertical',
-        siblingBehavior: 'pre-confine'
-    });
+// $('.accordion:nth-child(2').simpleAccordion({
+//         section: '.section',
+//         trigger: '.trigger',
+//         indicator: '.arrow',
+//         content: '.content',
+//         close: '.close',
+//         orientation: 'vertical',
+//         siblingBehavior: 'pre-confine'
+//     });
 
 
 // Data Attribute example
