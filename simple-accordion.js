@@ -116,7 +116,7 @@
 
         function debounce(fn, interval) {
             var lastCall;
-            console.log('debounce')
+            // console.log('debounce')
             return function() {
                 var now = Date.now();
 
@@ -154,11 +154,13 @@
             }
 
             $A.options = optionsAsObject;
-            $A.accordion = accordioElement; console.log($A.accordion)
+            $A.accordion = accordioElement;
+            // console.log($A.accordion)
             $A.id = randomReference() + uniqueID.substr(uniqueID.length - 5, uniqueID.length - 1);
             $A.setDefaults();
             $A.getElements();
             $A.setInitialState();
+            $A.realTimeState();
             $A.bindEvents($A.filterEvents, $A.toggleSection, this);
 
             publicMethods.destroy = $A.destroy;
@@ -228,6 +230,42 @@
         };
 
 
+        $A.realTimeState = function() {
+            var self = this;
+            var el = this.el;
+            var section;
+            var contentBody;
+            var elSection;
+            var defaults = this.defaults;
+            var win = window;
+
+            function windowSizeUpdate() {
+
+                // Same as in setInitalState
+                for (section in el) {
+                    elSection = el[section];
+
+                    contentBody = elSection.contentBody;
+                    // Get computed dimension immediately if content body is not dynamic
+                    if (defaults.dynamicContent) {
+                        self.store.contentComputedHeights[section] = parseInt(window.getComputedStyle(contentBody, null).getPropertyValue(defaults.dimension), 10);
+
+                    }
+                    // Set content body visibility 
+                    elSection.contentBody.style.visibility = defaults.contentBodyVisibility;
+                }
+                if ($A.currentTrigger) {
+                    // Function required that closes the current section only if open.
+                    $A.currentTrigger.click()
+                    // $A.currentSection.click(); // or mousedown etc
+                }
+                console.log('NEW SET', self.store.contentComputedHeights[section])
+            }
+
+            resizilla(windowSizeUpdate, 10000, false);
+
+        };
+
         $A.bindEvents = function(filterEvents, toggleSection, $A) {
             var prevent = false;
 
@@ -254,7 +292,11 @@
 
             for (section in el) {
                 currentSection = el[section];
-                if (currentSection.trigger === target) toggleSection(currentSection, section, $A);
+                
+                if (currentSection.trigger === target) {
+                    $A.currentTrigger = currentSection.trigger; console.log('$A.currentTrigger')
+                    toggleSection(currentSection, section, $A);
+                }
             }
         };
 
@@ -271,7 +313,7 @@
             var delay;
             var siblingsToggle;
 
-            console.log(siblingBehavior)
+            // console.log(siblingBehavior)
 
             function getDelayType(postConfine, $A) {
                 if (postConfine.indexOf('from-first') >= 0) {
@@ -307,8 +349,8 @@
                     {
                         delay = postConfine.replace(nonNumeric, '');
                         delayType = getDelayType(postConfine, $A);
- 
-                        console.log(delayType);
+
+                        // console.log(delayType);
 
                         selectedToggled = $A.toggleSelected(
                             section,
@@ -349,7 +391,6 @@
                 }
 
                 transitionEnd(section.content).bindEvent(function() {
-                    throttle2();
                     resolve();
                     transitionEnd(this).unbindEvent();
                 });
@@ -379,12 +420,12 @@
             }
 
 
-                timingID = timimgFn(function() {
-                    self.siblingSections.forEach(function(siblingSection) {
-                        siblingSection.content.style[dimension] = 0;
-                    });
+            timingID = timimgFn(function() {
+                self.siblingSections.forEach(function(siblingSection) {
+                    siblingSection.content.style[dimension] = 0;
                 });
-        
+            });
+
         };
 
 
@@ -419,23 +460,25 @@
             selectedToggled.then(function(results) {
                 timingID = timimgFn(function() {
                     switch (delayType) {
-                        case 'from-first': {
-                            console.log('from-first close immediately')
-                            self.siblingSections.forEach(function(siblingSection) {
-                                siblingSection.content.style[dimension] = 0;
-                            });
-                            break;
-                        }
-                        case 'from-last': {
-                            if (!$A.toggleEventRegister) {
+                        case 'from-first':
+                            {
+                                // console.log('from-first close immediately')
                                 self.siblingSections.forEach(function(siblingSection) {
                                     siblingSection.content.style[dimension] = 0;
                                 });
-                            } else {
-                                $A.toggleEventRegister = 0;
+                                break;
                             }
-                            break;
-                        }
+                        case 'from-last':
+                            {
+                                if (!$A.toggleEventRegister) {
+                                    self.siblingSections.forEach(function(siblingSection) {
+                                        siblingSection.content.style[dimension] = 0;
+                                    });
+                                } else {
+                                    $A.toggleEventRegister = 0;
+                                }
+                                break;
+                            }
                     }
                 }, delay);
             });
