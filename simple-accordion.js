@@ -286,8 +286,15 @@
             switch (siblingBehavior) {
                 case 'immediate':
                     {
-                        console.log('DO IMMEDIATE');
-                        $A.siblingBehavior.immediate();
+                        selectedToggled = $A.toggleSelected(
+                            section,
+                            sectionName,
+                            contentClosed,
+                            dimension
+                        );
+
+
+                        $A.siblingBehavior.immediate(selectedToggled, dimension, delayType, delay, sectionName);
                         break;
                     }
                 case preConfine:
@@ -353,9 +360,33 @@
 
         $A.siblingBehavior = {};
 
-        $A.siblingBehavior.immediate = function() {
-            console.log('immediate', this);
+        $A.siblingBehavior.immediate = function(selectedToggled, dimension, delayType, delay, currentSectionName) {
+            var self = this;
+            var timimgFn = setImmediate;
+            var timingID;
+            var section;
+            var el = $A.el;
+
+            this.el = el;
+            this.$A = $A;
+            this.siblingSections = [];
+
+            // Get sibling sections
+            for (section in el) {
+                if (section !== currentSectionName) {
+                    this.siblingSections.push(el[section]);
+                }
+            }
+
+
+                timingID = timimgFn(function() {
+                    self.siblingSections.forEach(function(siblingSection) {
+                        siblingSection.content.style[dimension] = 0;
+                    });
+                });
+        
         };
+
 
         // $A.siblingBehavior.prototype.preConfine = function(selectedToggled, dimension) {
         //     var self = this;
